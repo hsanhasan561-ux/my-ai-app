@@ -121,3 +121,66 @@ else:
         st.session_state.logged_in = False
         st.rerun()
     
+# =========================
+# ৬. ট্রানজ্যাকশন ও ব্যালেন্স
+# =========================
+def add_transaction(user, type_, amount):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    c.execute("INSERT INTO transactions (user, type, amount, date) VALUES (?,?,?,?)",
+              (user, type_, amount, now))
+    # ব্যালেন্স আপডেট
+    c.execute("SELECT balance FROM users WHERE username=?", (user,))
+    current_balance = c.fetchone()[0]
+    if type_ == "Deposit":
+        new_balance = current_balance + amount
+    else:
+        new_balance = current_balance - amount
+    c.execute("UPDATE users SET balance=? WHERE username=?", (new_balance, user))
+    conn.commit()
+    return new_balance
+    if menu == "ড্যাশবোর্ড":
+    st.subheader(f"স্বাগতম, {user_info[2]}")
+    
+    # মেট্রিক কার্ড
+    col1, col2, col3 = st.columns(3)
+    col1.markdown(f'<div class="metric-card"><h3>ব্যালেন্স</h3><h2>৳{user_info[5]}</h2></div>', unsafe_allow_html=True)
+    col2.markdown(f'<div class="metric-card"><h3>স্ট্যাটাস</h3><h2>{user_info[6]}</h2></div>', unsafe_allow_html=True)
+    col3.markdown(f'<div class="metric-card"><h3>র‍্যাঙ্ক</h3><h2>{user_info[8]}</h2></div>', unsafe_allow_html=True)
+    
+    # ট্রানজ্যাকশন হিস্ট্রি
+    st.subheader("⚡ ট্রানজ্যাকশন হিস্ট্রি")
+    df_trx = pd.read_sql("SELECT type, amount, date FROM transactions WHERE user=? ORDER BY date DESC", conn, params=(user,))
+    st.table(df_trx)
+    
+    # ডিপোজিট/উত্তোলন
+    st.subheader("💰 ব্যালেন্স আপডেট")
+    trx_type = st.selectbox("টাইপ", ["Deposit", "Withdraw"])
+    amount = st.number_input("পরিমাণ", min_value=0.0, step=100.0)
+    if st.button("আপডেট করুন"):
+        new_balance = add_transaction(user, trx_type, amount)
+        st.success(f"সফল! নতুন ব্যালেন্স: ৳{new_balance}")
+        elif menu == "অ্যাডমিন প্যানেল":
+    if user != "admin":
+        st.error("শুধুমাত্র অ্যাডমিনের জন্য!")
+    else:
+        st.subheader("পেন্ডিং রিকোয়েস্ট")
+        df = pd.read_sql("SELECT username, trx_id, status FROM users WHERE status='Pending'", conn)
+        st.table(df)
+
+        # ইউজার অ্যাক্টিভেশন
+        app_u = st.text_input("একটিভ করতে ইউজারনেম লিখুন")
+        if st.button("কনফার্ম করুন"):
+            c.execute("UPDATE users SET status='Active' WHERE username=?", (app_u,))
+            conn.commit()
+            st.success(f"{app_u} একটিভ হয়েছে!")
+
+        # ব্যালেন্স আপডেট
+        st.subheader("ব্যালেন্স আপডেট করুন")
+        target_user = st.text_input("ব্যালেন্স আপডেটের জন্য ইউজারনেম")
+        trx_type = st.selectbox("টাইপ", ["Deposit", "Withdraw"])
+        amount = st.number_input("পরিমাণ", min_value=0.0, step=100.0, key="admin_amount")
+        if st.button("অ্যাডমিন আপডেট করুন"):
+            if target_user:
+                new_balance = add_transaction(target_user, trx_type, amount)
+                st.success(f"{target_user} এর নতুন ব্যালেন্স: ৳{new_balance}")
+                
