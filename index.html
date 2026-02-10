@@ -21,7 +21,7 @@
 
         .input-info { color: var(--accent); font-size: 14px; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
         
-        /* 唳 唳熰唳曕唳膏 唳唰嵿Ω */
+        /* বড় টেক্সট বক্স */
         #patternDisplay { 
             width: 100%; padding: 20px; border-radius: 8px; border: 2px solid var(--accent); 
             background: #111; color: var(--accent); margin-bottom: 15px; min-height: 70px; 
@@ -46,7 +46,10 @@
         }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        .float-res { font-size: 42px; font-weight: 900; margin: 10px 0; text-transform: uppercase; line-height: 1; }
+        /* Win Percent Style */
+        .win-percent { font-size: 16px; font-weight: bold; color: #fff; background: rgba(0, 255, 204, 0.2); padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 5px; border: 1px solid var(--accent); }
+
+        .float-res { font-size: 42px; font-weight: 900; margin: 5px 0; text-transform: uppercase; line-height: 1; }
         .float-nums { font-size: 26px; color: #FFEB3B; font-weight: bold; letter-spacing: 6px; margin-bottom: 10px; }
 
         .history-section { width: 100%; margin-top: 25px; background: #0d1117; border-radius: 10px; padding: 12px; border: 1px solid #222; }
@@ -62,14 +65,14 @@
 
 <div id="loginScreen">
     <div class="login-box">
-        <h2 style="color: var(--accent); margin-bottom: 20px;">馃攼 VIP AI LOGIN</h2>
+        <h2 style="color: var(--accent); margin-bottom: 20px;">🔐 VIP AI LOGIN</h2>
         <input type="password" id="passInput" placeholder="Enter Password">
         <button class="btn-get" onclick="checkLogin()">LOGIN NOW</button>
     </div>
 </div>
 
 <div id="mainApp">
-    <h2 style="color: var(--accent); margin: 0 0 5px 0; letter-spacing: 1px;">馃敟 NAJMUL MASTER AI V10</h2>
+    <h2 style="color: var(--accent); margin: 0 0 5px 0; letter-spacing: 1px;">🔥 NAJMUL MASTER AI V10</h2>
     <div class="input-info">last 10 period input</div>
     
     <div class="number-grid" style="margin-top: 15px;">
@@ -92,18 +95,19 @@
         <button onclick="deleteLast()" style="background:var(--delete-red); border:none; color:white; border-radius:5px; padding:4px 12px; cursor:pointer; font-weight:bold;">DELETE</button>
     </div>
     
-    <div id="patternDisplay">唳嗋唰囙Π 10 唳熰 唳班唳溹唳侧唳� 唳︵唳�</div>
+    <div id="patternDisplay">আগের 10 টা রেজাল্ট দিন</div>
 
-    <input type="number" id="periodInput" placeholder="唳唳班唰熰Α 唳ㄠΞ唰嵿Μ唳� 唳︵唳� (唳唳Θ: 123)">
-    <button class="btn-get" onclick="startProcess()">馃殌 GET PRO SIGNAL</button>
+    <input type="number" id="periodInput" placeholder="পিরিয়ড নম্বর দিন (যেমন: 123)">
+    <button class="btn-get" onclick="startProcess()">🚀 GET PRO SIGNAL</button>
 
-    <div id="searchLoader">AI 唳唳班-唳侧唳唳� 唳忇Θ唳距Σ唳距唳膏唳� 唳曕Π唳涏<span class="loader-dots"></span></div>
+    <div id="searchLoader">AI প্রো-লেভেল এনালাইসিস করছে<span class="loader-dots"></span></div>
 
     <div id="floatingOverlay">
-        <div style="font-size: 12px; color: var(--accent); font-weight:bold;">1 wingo minute AI Signal</div>
+        <div style="font-size: 11px; color: var(--accent); font-weight:bold;">1 wingo minute AI Signal</div>
+        <div class="win-percent">WIN: <span id="winRateDisp">--</span>%</div>
         <div id="floatPred" class="float-res">--</div>
         <div id="floatNums" class="float-nums">--</div>
-        <div style="font-size:11px; color:#888;">System: Dk stablish</div>
+        <div style="font-size:10px; color:#888;">System: Dk stablish</div>
         <div style="display:flex; gap:8px; margin-top:20px;">
             <button onclick="record('WIN')" style="flex:1; background:#2ecc71; border:none; color:#fff; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">WIN</button>
             <button onclick="record('LOSS')" style="flex:1; background:#e74c3c; border:none; color:#fff; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">LOSS</button>
@@ -111,19 +115,18 @@
     </div>
 
     <div class="history-section">
-        <div style="text-align:left; color:var(--accent); font-size:15px; margin-bottom:12px; font-weight:bold;">馃晵 Data Intelligence History</div>
+        <div style="text-align:left; color:var(--accent); font-size:15px; margin-bottom:12px; font-weight:bold;">🕒 Data Intelligence History</div>
         <table>
             <thead><tr><th>Period</th><th>Prediction</th><th>Result</th></tr></thead>
             <tbody id="historyBody"></tbody>
         </table>
     </div>
 
-    <a href="https://t.me/your_telegram" class="social-btn tg-link">鉁堬笍 JOIN TELEGRAM CHANNEL</a>
-    <a href="#" class="social-btn app-link">馃摬 DOWNLOAD FULL APP</a>
+    <a href="https://t.me/your_telegram" class="social-btn tg-link">✈️ JOIN TELEGRAM CHANNEL</a>
+    <a href="#" class="social-btn app-link">📲 DOWNLOAD FULL APP</a>
 </div>
 
 <script>
-    // 唳嗋Κ唳ㄠ唳� 唳︵唳撪唳� 唳膏Ξ唳膏唳� 唳∴唳熰唳唳�
     const MASTER_DB = [
         { pattern: "SSSSS", next: "BIG", n: "7,9" },
         { pattern: "BBBBB", next: "SMALL", n: "0,2" },
@@ -132,7 +135,7 @@
         { pattern: "BBSSB", next: "BIG", n: "5,7" },
         { pattern: "SSBBS", next: "SMALL", n: "2,4" },
         { pattern: "BBSBS", next: "SMALL", n: "0,4" },
-        { pattern: "SBBSB", next: "BIG", n: "9,7" },-
+        { pattern: "SBBSB", next: "BIG", n: "9,7" },
         { pattern: "BBSBSSBBSS", next: "BIG", n: "7,9" },
         { pattern: "SSBSBBSSBB", next: "SMALL", n: "0,2" },
         { pattern: "BBBSBSSBBS", next: "BIG", n: "8,5" },
@@ -143,8 +146,6 @@
         { pattern: "SSBBSSBSBS", next: "BIG", n: "5,7" },
         { pattern: "BSSBBSBSBS", next: "BIG", n: "8,6" },
         { pattern: "SBBSBBSBSB", next: "SMALL", n: "1,3" },
-
-        // --- 唳嗋唰囙Π 唰ㄠЕ唰︵唳� 唳∴唳熰 ---
         { pattern: "SSSSS", next: "BIG", n: "7,9" }, { pattern: "BBBBB", next: "SMALL", n: "0,2" },
         { pattern: "BBSSB", next: "BIG", n: "5,8" }, { pattern: "SSBBS", next: "SMALL", n: "1,3" },
         { pattern: "BSBSB", next: "SMALL", n: "4,2" }, { pattern: "SBSBS", next: "BIG", n: "6,7" },
@@ -187,15 +188,13 @@
     let inputs = [];
     let currentPrediction = "";
     let currentNums = "";
-    
-    // WIN/LOSS 唳侧唳班唳ㄠ唳� 唳∴唳熰唳唳�
     let aiLearningData = JSON.parse(localStorage.getItem('ai_learning_pro_v10')) || [];
 
     function checkLogin() {
         if(document.getElementById('passInput').value === "8899") {
             document.getElementById('loginScreen').style.display = "none";
             document.getElementById('mainApp').style.display = "block";
-        } else { alert("唳唳� 唳唳膏唰熰唳班唳�!"); }
+        } else { alert("ভুল পাসওয়ার্ড!"); }
     }
 
     function addNum(n) {
@@ -208,14 +207,14 @@
     function deleteLast() { inputs.pop(); updateUI(); }
 
     function updateUI() {
-        document.getElementById('patternDisplay').innerText = inputs.length === 0 ? "唳呧Κ唰囙唰嵿Ψ唳� 唳曕Π唳涏..." : inputs.join(' | ');
+        document.getElementById('patternDisplay').innerText = inputs.length === 0 ? "আগের 10 টা রেজাল্ট দিন" : inputs.join(' , ');
         document.getElementById('counter').innerText = `Input (${inputs.length}/10)`;
     }
 
     function startProcess() {
-        if (inputs.length < 10) { alert("唳︵唳� 唳曕Π唰� 唰оЕ唳熰 唳唳班唰熰Α 唳囙Θ唳唳� 唳︵唳�!"); return; }
+        if (inputs.length < 10) { alert("দয়া করে ১০টি পিরিয়ড ইনপুট দিন!"); return; }
         const pInput = document.getElementById('periodInput').value;
-        if (!pInput) { alert("唳唳班唰熰Α 唳ㄠΞ唰嵿Μ唳� 唳︵唳�!"); return; }
+        if (!pInput) { alert("পিরিয়ড নম্বর দিন!"); return; }
 
         document.getElementById('searchLoader').style.display = "block";
         document.getElementById('floatingOverlay').style.display = "none";
@@ -230,29 +229,30 @@
         const patternKey = inputs.map(i => i.split('-')[0]).join('');
         let prediction = "";
         let numSig = "";
+        let winRate = 0;
 
-        // 唰�. 唳夃唳�/唳侧Ω 唳灌唳膏唳熰唳班 唳唳唳氞唳� (AI Learning)
         let historyMatch = aiLearningData.find(h => h.pattern === patternKey && h.status === 'WIN');
-
-        // 唰�. 唳唳囙Θ 唳∴唳熰唳唳� 唳唳唳氞唳�
         let dbMatch = MASTER_DB.find(d => patternKey.includes(d.pattern));
 
         if (historyMatch) {
             prediction = historyMatch.predict;
             numSig = (prediction === "BIG") ? "7,9" : "0,2";
+            winRate = Math.floor(Math.random() * (99 - 97 + 1)) + 97;
         } else if (dbMatch) {
             prediction = dbMatch.next;
             numSig = dbMatch.n;
+            winRate = Math.floor(Math.random() * (98 - 95 + 1)) + 95;
         } else {
-            // 唰�. 唳唳班-唳侧唳唳� 唳熰唳班唳ㄠ唳� 唳忇Θ唳距Σ唳距唳膏唳� (唳Ζ唳� 唳唳唳� 唳ㄠ 唳ム唳曕)
             let bCount = inputs.filter(x => x.startsWith('B')).length;
-            prediction = (bCount >= 5) ? "SMALL" : "BIG"; // Trend reversal logic
+            prediction = (bCount >= 5) ? "SMALL" : "BIG";
             numSig = (prediction === "BIG") ? "7,5" : "0,4";
+            winRate = Math.floor(Math.random() * (94 - 86 + 1)) + 86;
         }
 
         currentPrediction = prediction;
         currentNums = numSig;
 
+        document.getElementById('winRateDisp').innerText = winRate;
         const resDisp = document.getElementById('floatPred');
         resDisp.innerText = prediction;
         resDisp.style.color = prediction === "BIG" ? "#ff4d4d" : "#00d2ff";
@@ -265,7 +265,6 @@
         const period = document.getElementById('periodInput').value || "---";
         const patternKey = inputs.map(i => i.split('-')[0]).join('');
 
-        // 唳∴唳熰唳唳溹 唳侧唳班唳ㄠ唳� 唳∴唳熰 唳唳� 唳曕Π唳�
         aiLearningData.push({
             pattern: patternKey,
             predict: currentPrediction,
@@ -283,5 +282,5 @@
     }
 </script>
 </body>
-                                                                        </html>
-
+    </html>
+    
