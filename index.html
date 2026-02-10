@@ -125,8 +125,49 @@
 
 <script>
     const MASTER_DB = [
+        
         { pattern: "SSSSS", next: "BIG", n: "7,9" }, { pattern: "BBBBB", next: "SMALL", n: "0,2" },
-        { SBS", next: "BIG", n: "7,8" }, { pattern: "SBS BSS BSB", next: "SMALL", n: "0,3" }  ];
+        { pattern: "BSBSB", next: "SMALL", n: "1,3" }, { pattern: "SBSBS", next: "BIG", n: "6,8" },
+        { pattern: "BBSSB", next: "BIG", n: "5,7" }, { pattern: "SSBBS", next: "SMALL", n: "2,4" },
+        { pattern: "BBSBS", next: "SMALL", n: "0,4" }, { pattern: "SBBSB", next: "BIG", n: "9,7" },
+        { pattern: "BBSBSSBBSS", next: "BIG", n: "7,9" }, { pattern: "SSBSBBSSBB", next: "SMALL", n: "0,2" },
+        { pattern: "BBBSBSSBBS", next: "BIG", n: "8,5" }, { pattern: "SSSBSBBSBB", next: "SMALL", n: "1,4" },
+        { pattern: "BSBSBSSBBS", next: "SMALL", n: "3,0" }, { pattern: "SBSBSBBSBB", next: "BIG", n: "6,9" },
+        { pattern: "BBSSBBSBSB", next: "SMALL", n: "2,4" }, { pattern: "SSBBSSBSBS", next: "BIG", n: "5,7" },
+        { pattern: "BSSBBSBSBS", next: "BIG", n: "8,6" }, { pattern: "SBBSBBSBSB", next: "SMALL", n: "1,3" },
+        { pattern: "BBSSB", next: "BIG", n: "5,8" }, { pattern: "SSBBS", next: "SMALL", n: "1,3" },
+        { pattern: "BSBSB", next: "SMALL", n: "4,2" }, { pattern: "SBSBS", next: "BIG", n: "6,7" },
+        { pattern: "BBBSB", next: "SMALL", n: "0,1" }, { pattern: "SSSBS", next: "BIG", n: "9,5" },
+        { pattern: "BSSBB", next: "BIG", n: "8,6" }, { pattern: "SBBSS", next: "SMALL", n: "3,2" },
+        { pattern: "BBBSS", next: "BIG", n: "7,5" }, { pattern: "SSSBB", next: "SMALL", n: "0,4" },
+        { pattern: "BSBSS", next: "BIG", n: "9,8" }, { pattern: "SBSBB", next: "SMALL", n: "1,2" },
+        { pattern: "BBSSBBSS", next: "BIG", n: "7,9" }, { pattern: "SSBBSSBB", next: "SMALL", n: "0,2" },
+        { pattern: "BBBBSSBB", next: "SMALL", n: "3,0" }, { pattern: "SSSSBBSS", next: "BIG", n: "6,9" },
+        { pattern: "BSSBSSBS", next: "BIG", n: "7,5" }, { pattern: "SBB SBB SB", next: "SMALL", n: "2,4" },
+        { pattern: "BSBSSBSB", next: "BIG", n: "8,9" }, { pattern: "SBSBB SBS", next: "SMALL", n: "1,0" },
+        { pattern: "BBBSBBBS", next: "SMALL", n: "0,3" }, { pattern: "SSSBSSSB", next: "BIG", n: "7,5" },
+        { pattern: "BBSSSBBS", next: "BIG", n: "9,6" }, { pattern: "SSBBBSBB", next: "SMALL", n: "1,4" },
+        { pattern: "BSBBSSBB", next: "BIG", n: "8,7" }, { pattern: "SBSSBBSS", next: "SMALL", n: "2,3" },
+        { pattern: "BBBBSBBB", next: "SMALL", n: "0,1" }, { pattern: "SSSSS BSS", next: "BIG", n: "9,5" },
+        { pattern: "BSBSB SBS", next: "BIG", n: "7,8" }, { pattern: "SBSBS BSB", next: "SMALL", n: "2,0" },
+        { pattern: "BSSSB", next: "BIG", n: "6,9" }, { pattern: "SBBBS", next: "SMALL", n: "0,3" },
+        { pattern: "BBSBB", next: "SMALL", n: "1,4" }, { pattern: "SSBSS", next: "BIG", n: "8,5" },
+        { pattern: "BSSBS", next: "BIG", n: "7,9" }, { pattern: "SBB SB", next: "SMALL", n: "2,0" },
+        { pattern: "BBBS S", next: "SMALL", n: "1,3" }, { pattern: "SSSB B", next: "BIG", n: "6,8" },
+        { pattern: "BSBBS", next: "BIG", n: "5,7" }, { pattern: "SBBSSB", next: "SMALL", n: "4,1" },
+        { pattern: "BBSBSS", next: "BIG", n: "9,8" }, { pattern: "SSBSBB", next: "SMALL", n: "2,3" },
+        { pattern: "BBSSSB", next: "BIG", n: "7,6" }, { pattern: "SSBBBS", next: "SMALL", n: "0,1" },
+        { pattern: "BSBBBS", next: "BIG", n: "8,5" }, { pattern: "SBSSSB", next: "SMALL", n: "4,2" },
+        { pattern: "BBSSBBSSBB", next: "SMALL", n: "0,3" }, { pattern: "SSBBSSBBSS", next: "BIG", n: "9,7" },
+        { pattern: "BBSBSBSBBS", next: "BIG", n: "8,6" }, { pattern: "SSBSBSBSSB", next: "SMALL", n: "1,2" },
+        { pattern: "BBBBBSBBBB", next: "SMALL", n: "4,0" }, { pattern: "SSSSSBSSSS", next: "BIG", n: "5,9" },
+        { pattern: "BSBBSBBSBB", next: "SMALL", n: "2,1" }, { pattern: "SBSBSB SBSB", next: "BIG", n: "7,8" },
+        { pattern: "BBBS BBBS BB", next: "SMALL", n: "0,4" }, { pattern: "SSSB SSSB SS", next: "BIG", n: "9,6" },
+        { pattern: "BSSS BSSS BS", next: "BIG", n: "7,5" }, { pattern: "SBBB SBBB SB", next: "SMALL", n: "3,1" },
+        { pattern: "BB SS BB SS BB", next: "SMALL", n: "1,2" }, { pattern: "SS BB SS BB SS", next: "BIG", n: "8,9" },
+        { pattern: "BS SS BB SB SB", next: "BIG", n: "6,7" }, { pattern: "SB BB SS BS BS", next: "SMALL", n: "0,4" },
+        { pattern: "B B B S S S B B", next: "SMALL", n: "2,3" }, { pattern: "S S S B B B S S", next: "BIG", n: "9,5" },
+        { pattern: "BSB SBB SBS", next: "BIG", n: "7,8" }, { pattern: "SBS BSS BSB", next: "SMALL", n: "1,0" }];
 
     let inputs = [];
     let currentPrediction = "";
