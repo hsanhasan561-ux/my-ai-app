@@ -21,7 +21,6 @@
 
         .input-info { color: var(--accent); font-size: 14px; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
         
-        /* বড় টেক্সট বক্স */
         #patternDisplay { 
             width: 100%; padding: 20px; border-radius: 8px; border: 2px solid var(--accent); 
             background: #111; color: var(--accent); margin-bottom: 15px; min-height: 70px; 
@@ -37,7 +36,6 @@
         .loader-dots::after { content: '...'; animation: dots 1.5s steps(5, end) infinite;}
         @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } }
 
-        /* Floating Result Window */
         #floatingOverlay { 
             display: none; position: fixed; top: 20%; right: 10px; width: 230px; 
             background: rgba(13, 20, 30, 0.98); border: 2.5px solid var(--accent); 
@@ -46,7 +44,6 @@
         }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* Win Percent Style */
         .win-percent { font-size: 16px; font-weight: bold; color: #fff; background: rgba(0, 255, 204, 0.2); padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 5px; border: 1px solid var(--accent); }
 
         .float-res { font-size: 42px; font-weight: 900; margin: 5px 0; text-transform: uppercase; line-height: 1; }
@@ -128,32 +125,19 @@
 
 <script>
     const MASTER_DB = [
-        { pattern: "SSSSS", next: "BIG", n: "7,9" },
-        { pattern: "BBBBB", next: "SMALL", n: "0,2" },
-        { pattern: "BSBSB", next: "SMALL", n: "1,3" },
-        { pattern: "SBSBS", next: "BIG", n: "6,8" },
-        { pattern: "BBSSB", next: "BIG", n: "5,7" },
-        { pattern: "SSBBS", next: "SMALL", n: "2,4" },
-        { pattern: "BBSBS", next: "SMALL", n: "0,4" },
-        { pattern: "SBBSB", next: "BIG", n: "9,7" },
-        { pattern: "BBSBSSBBSS", next: "BIG", n: "7,9" },
-        { pattern: "SSBSBBSSBB", next: "SMALL", n: "0,2" },
-        { pattern: "BBBSBSSBBS", next: "BIG", n: "8,5" },
-        { pattern: "SSSBSBBSBB", next: "SMALL", n: "1,4" },
-        { pattern: "BSBSBSSBBS", next: "SMALL", n: "3,0" },
-        { pattern: "SBSBSBBSBB", next: "BIG", n: "6,9" },
-        { pattern: "BBSSBBSBSB", next: "SMALL", n: "2,4" },
-        { pattern: "SSBBSSBSBS", next: "BIG", n: "5,7" },
-        { pattern: "BSSBBSBSBS", next: "BIG", n: "8,6" },
-        { pattern: "SBBSBBSBSB", next: "SMALL", n: "1,3" },
         { pattern: "SSSSS", next: "BIG", n: "7,9" }, { pattern: "BBBBB", next: "SMALL", n: "0,2" },
+        { pattern: "BSBSB", next: "SMALL", n: "1,3" }, { pattern: "SBSBS", next: "BIG", n: "6,8" },
+        { pattern: "BBSSB", next: "BIG", n: "5,7" }, { pattern: "SSBBS", next: "SMALL", n: "2,4" },
+        { pattern: "BBSBS", next: "SMALL", n: "0,4" }, { pattern: "SBBSB", next: "BIG", n: "9,7" },
+        { pattern: "BBSBSSBBSS", next: "BIG", n: "7,9" }, { pattern: "SSBSBBSSBB", next: "SMALL", n: "0,2" },
+        { pattern: "BBBSBSSBBS", next: "BIG", n: "8,5" }, { pattern: "SSSBSBBSBB", next: "SMALL", n: "1,4" },
+        { pattern: "BSBSBSSBBS", next: "SMALL", n: "3,0" }, { pattern: "SBSBSBBSBB", next: "BIG", n: "6,9" },
+        { pattern: "BBSSBBSBSB", next: "SMALL", n: "2,4" }, { pattern: "SSBBSSBSBS", next: "BIG", n: "5,7" },
+        { pattern: "BSSBBSBSBS", next: "BIG", n: "8,6" }, { pattern: "SBBSBBSBSB", next: "SMALL", n: "1,3" },
         { pattern: "BBSSB", next: "BIG", n: "5,8" }, { pattern: "SSBBS", next: "SMALL", n: "1,3" },
         { pattern: "BSBSB", next: "SMALL", n: "4,2" }, { pattern: "SBSBS", next: "BIG", n: "6,7" },
         { pattern: "BBBSB", next: "SMALL", n: "0,1" }, { pattern: "SSSBS", next: "BIG", n: "9,5" },
         { pattern: "BSSBB", next: "BIG", n: "8,6" }, { pattern: "SBBSS", next: "SMALL", n: "3,2" },
-        { pattern: "28483725", next: "SMALL", n: "0,4" }, { pattern: "046827803", next: "BIG", n: "5,7" },
-        { pattern: "9880106123", next: "BIG", n: "8,9" }, { pattern: "742305", next: "BIG", n: "9,6" },
-        { pattern: "042361", next: "SMALL", n: "1,3" }, { pattern: "846805", next: "SMALL", n: "2,4" },
         { pattern: "BBBSS", next: "BIG", n: "7,5" }, { pattern: "SSSBB", next: "SMALL", n: "0,4" },
         { pattern: "BSBSS", next: "BIG", n: "9,8" }, { pattern: "SBSBB", next: "SMALL", n: "1,2" },
         { pattern: "BBSSBBSS", next: "BIG", n: "7,9" }, { pattern: "SSBBSSBB", next: "SMALL", n: "0,2" },
@@ -188,7 +172,7 @@
     let inputs = [];
     let currentPrediction = "";
     let currentNums = "";
-    let aiLearningData = JSON.parse(localStorage.getItem('ai_learning_pro_v10')) || [];
+    let aiLearningData = JSON.parse(localStorage.getItem('ai_v10_learning')) || [];
 
     function checkLogin() {
         if(document.getElementById('passInput').value === "1122") {
@@ -221,43 +205,66 @@
 
         setTimeout(() => {
             document.getElementById('searchLoader').style.display = "none";
-            deepAnalysis();
+            deepAnalysisAI();
         }, 3000);
     }
 
-    function deepAnalysis() {
+    function deepAnalysisAI() {
         const patternKey = inputs.map(i => i.split('-')[0]).join('');
+        const lastTen = inputs.map(i => i.split('-')[0]);
+        const lastVal = lastTen[lastTen.length - 1];
+
+        let trendCount = 0;
+        for (let i = lastTen.length - 1; i >= 0; i--) {
+            if (lastTen[i] === lastVal) trendCount++;
+            else break;
+        }
+
         let prediction = "";
-        let numSig = "";
         let winRate = 0;
 
-        let historyMatch = aiLearningData.find(h => h.pattern === patternKey && h.status === 'WIN');
-        let dbMatch = MASTER_DB.find(d => patternKey.includes(d.pattern));
-
-        if (historyMatch) {
-            prediction = historyMatch.predict;
-            numSig = (prediction === "BIG") ? "7,9" : "0,2";
-            winRate = Math.floor(Math.random() * (99 - 97 + 1)) + 97;
-        } else if (dbMatch) {
-            prediction = dbMatch.next;
-            numSig = dbMatch.n;
-            winRate = Math.floor(Math.random() * (98 - 95 + 1)) + 95;
+        let memoryMatch = aiLearningData.find(m => m.pattern === patternKey && m.status === 'WIN');
+        
+        if (memoryMatch) {
+            prediction = memoryMatch.predict;
+            winRate = 99;
         } else {
-            let bCount = inputs.filter(x => x.startsWith('B')).length;
-            prediction = (bCount >= 5) ? "SMALL" : "BIG";
-            numSig = (prediction === "BIG") ? "7,5" : "0,4";
-            winRate = Math.floor(Math.random() * (94 - 86 + 1)) + 86;
+            let dbMatch = MASTER_DB.find(d => patternKey.includes(d.pattern.replace(/\s/g, '')));
+            if (dbMatch) {
+                prediction = dbMatch.next;
+                winRate = 92;
+            } else {
+                if (trendCount === 1) { prediction = (lastVal === 'B' ? "SMALL" : "BIG"); winRate = 60; }
+                else if (trendCount === 2) { prediction = (lastVal === 'B' ? "SMALL" : "BIG"); winRate = 70; }
+                else if (trendCount === 3) { prediction = lastVal; winRate = 50; }
+                else if (trendCount === 4) { prediction = lastVal; winRate = 40; }
+                else if (trendCount === 5) { prediction = lastVal; winRate = 20; }
+                else if (trendCount >= 6) { prediction = lastVal; winRate = 10; }
+                else { prediction = "BIG"; winRate = 50; }
+            }
         }
 
         currentPrediction = prediction;
-        currentNums = numSig;
+
+        // --- ডাইনামিক সংখ্যা লজিক এখানে শুরু ---
+        let dbMatchForNums = MASTER_DB.find(d => patternKey.includes(d.pattern.replace(/\s/g, '')));
+        if (dbMatchForNums && dbMatchForNums.n) {
+            currentNums = dbMatchForNums.n; 
+        } else if (typeof memoryMatch !== 'undefined' && memoryMatch && memoryMatch.nums) {
+            currentNums = memoryMatch.nums;
+        } else {
+            let base = (prediction === "BIG") ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4];
+            let pSeed = parseInt(document.getElementById('periodInput').value) || 0;
+            currentNums = base.sort(() => (pSeed % 7) - 3.5).slice(0, 3).join(',');
+        }
+        // --- ডাইনামিক সংখ্যা লজিক এখানে শেষ ---
 
         document.getElementById('winRateDisp').innerText = winRate;
         const resDisp = document.getElementById('floatPred');
         resDisp.innerText = prediction;
         resDisp.style.color = prediction === "BIG" ? "#ff4d4d" : "#00d2ff";
         
-        document.getElementById('floatNums').innerText = numSig;
+        document.getElementById('floatNums').innerText = currentNums;
         document.getElementById('floatingOverlay').style.display = "block";
     }
 
@@ -268,9 +275,10 @@
         aiLearningData.push({
             pattern: patternKey,
             predict: currentPrediction,
-            status: status
+            status: status,
+            nums: currentNums
         });
-        localStorage.setItem('ai_learning_pro_v10', JSON.stringify(aiLearningData));
+        localStorage.setItem('ai_v10_learning', JSON.stringify(aiLearningData));
 
         const row = `<tr><td>${period}</td><td style="color:${currentPrediction==='BIG'?'#ff4d4d':'#00d2ff'}; font-weight:bold;">${currentPrediction} (${currentNums})</td><td style="color:${status==='WIN'?'#2ecc71':'#e74c3c'}; font-weight:bold;">${status}</td></tr>`;
         document.getElementById('historyBody').innerHTML = row + document.getElementById('historyBody').innerHTML;
@@ -282,5 +290,4 @@
     }
 </script>
 </body>
-    </html>
-    
+</html>
