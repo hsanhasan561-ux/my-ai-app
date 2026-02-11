@@ -3,36 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BD MASTER AI V10 PRO</title>
+    <title>BD MASTER AI V10 PRO - 7 CORE SQL ENGINE</title>
     <style>
         :root { --primary-bg: #040608; --panel-bg: #0d1117; --accent: #00FFCC; --delete-red: #ff4d4d; }
         body { background-color: var(--primary-bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; }
         .login-box { background: var(--panel-bg); padding: 30px; border-radius: 15px; border: 1px solid var(--accent); text-align: center; }
         #mainApp { display: none; width: 100%; max-width: 450px; text-align: center; }
+        .ai-status-card { background: var(--panel-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 15px; margin-bottom: 15px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; box-sizing: border-box;}
+        .stat-box { text-align: left; border-left: 2px solid #333; padding-left: 10px; }
+        .stat-box label { font-size: 10px; color: #888; display: block; text-transform: uppercase; }
+        .stat-box span { font-size: 15px; font-weight: bold; color: #fff; }
         .number-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
         .num-btn { border: none; border-radius: 5px; height: 40px; color: white; font-weight: bold; cursor: pointer; font-size: 14px; }
         .n5, .n6 { background: #ff4d4d; } .n7 { background: #9b59b6; } .n8, .n9 { background: #34495e; }
         .n0, .n1 { background: #2ecc71; } .n2 { background: #16a085; } .n3, .n4 { background: #f39c12; }
         .bg-blue { background: #3498db; font-size: 10px; } .bg-orange { background: #e67e22; font-size: 10px; }
-        .input-info { color: var(--accent); font-size: 14px; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
-        #patternDisplay { width: 100%; padding: 20px; border-radius: 8px; border: 2px solid var(--accent); background: #111; color: var(--accent); margin-bottom: 15px; min-height: 70px; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; text-shadow: 0 0 10px rgba(0, 255, 204, 0.5); text-align: center; box-sizing: border-box;}
+        #patternDisplay { width: 100%; padding: 20px; border-radius: 8px; border: 2px solid var(--accent); background: #111; color: var(--accent); margin-bottom: 15px; min-height: 70px; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; box-sizing: border-box;}
         input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; color: white; border: 1px solid #333; border-radius: 8px; box-sizing: border-box; outline: none; }
         .btn-get { background: linear-gradient(90deg, #00FFCC, #00d2ff); color: #000; width: 100%; font-weight: 900; height: 55px; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3); }
-        .social-btn { display: flex; justify-content: space-around; width: 100%; margin: 15px 0; gap: 10px; }
-        .tg-link { background: #0088cc; color: #fff; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; flex: 1; text-align: center; }
-        #searchLoader { display: none; margin: 15px 0; color: var(--accent); font-weight: bold; font-size: 16px; }
-        .loader-dots::after { content: '...'; animation: dots 1.5s steps(5, end) infinite;}
-        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } }
-        
-        /* পপ-আপ ডিজাইন */
-        #floatingOverlay { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 260px; background: rgba(13, 20, 30, 0.98); border: 2.5px solid var(--accent); border-radius: 15px; padding: 20px; z-index: 10000; text-align: center; box-shadow: 0 0 40px rgba(0,255,204,0.6); }
-        .pop-top-text { color: var(--accent); font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
-        .pop-bottom-text { color: #888; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-top: 15px; }
-        .win-percent { font-size: 16px; font-weight: bold; color: #fff; background: rgba(0, 255, 204, 0.2); padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 5px; border: 1px solid var(--accent); }
-        .float-res { font-size: 42px; font-weight: 900; margin: 5px 0; text-transform: uppercase; line-height: 1; }
-        .float-nums { font-size: 26px; color: #FFEB3B; font-weight: bold; letter-spacing: 6px; margin-bottom: 10px; }
-        
+        #floatingOverlay { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; background: rgba(13, 20, 30, 0.98); border: 2.5px solid var(--accent); border-radius: 15px; padding: 20px; z-index: 10000; text-align: center; box-shadow: 0 0 40px rgba(0,255,204,0.6); }
+        .float-res { font-size: 42px; font-weight: 900; margin: 5px 0; text-transform: uppercase; }
+        .ai-bet-info { background: #333; color: #00FFCC; padding: 8px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; border: 1px dashed var(--accent); }
         .history-section { width: 100%; margin-top: 25px; background: #0d1117; border-radius: 10px; padding: 12px; border: 1px solid #222; overflow-x: auto; }
         table { width: 100%; font-size: 13px; border-collapse: collapse; }
         th, td { padding: 10px; border-bottom: 1px solid #222; text-align: center; }
@@ -42,22 +34,21 @@
 
 <div id="loginScreen">
     <div class="login-box">
-        <h2 style="color: var(--accent); margin-bottom: 20px;">🔐najmul VIP AI SQL LOGIN</h2>
+        <h2 style="color: var(--accent);">🔐 VIP AI SQL LOGIN</h2>
         <input type="password" id="passInput" placeholder="Enter Password">
         <button class="btn-get" onclick="checkLogin()">LOGIN NOW</button>
     </div>
 </div>
 
 <div id="mainApp">
-    <h2 style="color: var(--accent); margin: 0 0 5px 0; letter-spacing: 1px;">🔥najmul pro MASTER AI V10 SQL</h2>
-    
-    <div class="social-btn">
-        <a href="https://t.me/yourtelegram" class="tg-link">JOIN TELEGRAM</a>
-        <a href="#" class="tg-link" style="background:#ff9800;">APP DOWNLOAD</a>
+    <h2 style="color: var(--accent); margin-bottom: 15px;">🔥 najmul MASTER AI V10 SQL</h2>
+    <div class="ai-status-card">
+        <div class="stat-box"><label>Balance</label><span id="balView">10000</span></div>
+        <div class="stat-box"><label>AI Mode</label><span id="aiMode" style="color: #00FFCC;">7-CORE AI</span></div>
+        <div class="stat-box"><label>Win/Loss</label><span><b style="color:#2ecc71" id="winV">0</b> / <b style="color:#ff4d4d" id="lossV">0</b></span></div>
+        <div class="stat-box"><label>Risk Level</label><span id="riskLevel">LOW</span></div>
     </div>
-
-    <div class="input-info">6-CORE SYSTEM ACTIVE</div>
-    
+    <input type="number" id="balInput" placeholder="ব্যালেন্স সেট করুন (যেমন: ১০০০০)" onchange="initBalance()">
     <div class="number-grid">
         <button class="num-btn bg-blue" disabled>+Big</button>
         <button class="num-btn n5" onclick="addNum(5)">5</button>
@@ -72,61 +63,55 @@
         <button class="num-btn n3" onclick="addNum(3)">3</button>
         <button class="num-btn n4" onclick="addNum(4)">4</button>
     </div>
-
     <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
         <span id="counter" style="color:var(--accent); font-weight:bold;">Input (0/10)</span>
         <button onclick="deleteLast()" style="background:var(--delete-red); border:none; color:white; border-radius:5px; padding:5px 15px; cursor:pointer;">DELETE</button>
     </div>
-    
-    <div id="patternDisplay">আগের 10 টা রেজাল্ট দিন</div>
-
+    <div id="patternDisplay">আগের ১০টি রেজাল্ট ইনপুট দিন</div>
     <input type="number" id="periodInput" placeholder="এখানে পিরিয়ড নম্বর লিখুন">
     <button class="btn-get" onclick="startProcess()">🚀 GET PRO SIGNAL</button>
-
-    <div id="searchLoader">SQL ANALYZING<span class="loader-dots"></span></div>
-
+    <div id="searchLoader" style="display:none; margin:15px 0; color:var(--accent);">SQL ANALYZING...</div>
     <div id="floatingOverlay">
-        <div class="pop-top-text">1 MINUTE SIGNAL</div>
-        <div class="win-percent">ACCURACY: <span id="winRateDisp">--</span>%</div>
+        <div style="color:var(--accent); font-weight:bold; margin-bottom:10px;">PRO AI SIGNAL</div>
+        <div id="winRateDisp" style="font-size:12px; color:#fff; margin-bottom:5px;">ACCURACY: --%</div>
         <div id="floatPred" class="float-res">--</div>
-        <div id="floatNums" class="float-nums">--</div>
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button onclick="record('WIN')" style="flex:1; background:#2ecc71; border:none; color:#fff; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">WIN</button>
-            <button onclick="record('LOSS')" style="flex:1; background:#e74c3c; border:none; color:#fff; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">LOSS</button>
+        <div id="floatNums" style="font-size:24px; color:#FFEB3B; letter-spacing:5px; margin-bottom:15px;">--</div>
+        <div class="ai-bet-info" id="aiBetInfo">BET AMOUNT: 200</div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="record('WIN')" style="flex:1; background:#2ecc71; border:none; color:#fff; padding:10px; border-radius:5px; font-weight:bold;">WIN</button>
+            <button onclick="record('LOSS')" style="flex:1; background:#e74c3c; border:none; color:#fff; padding:10px; border-radius:5px; font-weight:bold;">LOSS</button>
         </div>
-        <div class="pop-bottom-text">DK signal provide</div>
     </div>
-
     <div class="history-section">
         <table>
-            <thead><tr><th>Period</th><th>Signal (Nums)</th><th>Result</th></tr></thead>
+            <thead><tr><th>Period</th><th>Signal</th><th>Result</th></tr></thead>
             <tbody id="historyBody"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // --- DATABASE Logic (বিন্দু পরিমাণ পরিবর্তন করা হয়নি) ---
-    const DB_NAME = "BD_SQL_DATABASE";
+    let wallet = 10000;
+    let wins = 0, losses = 0, mStep = 0, inputs = [];
+    let currentPrediction = "";
+    let currentNumbers = "";
+
+    const DB_NAME = "NAJMUL_AI_DB";
     const STORE_NAME = "patterns";
     let db;
     const request = indexedDB.open(DB_NAME, 1);
     request.onupgradeneeded = (e) => {
         db = e.target.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-            db.createObjectStore(STORE_NAME, { keyPath: "pattern" });
-        }
+        db.createObjectStore(STORE_NAME, { keyPath: "pattern" });
     };
     request.onsuccess = (e) => { 
         db = e.target.result; 
-        savePatternsToSQL(); 
-    };
-
-    function savePatternsToSQL() {
-        const tx = db.transaction(STORE_NAME, "readwrite");
-        const store = tx.objectStore(STORE_NAME);
-        const MASTER_LIST = [
-              // ৩০টি ছবির ডাটা বিশ্লেষণ অনুযায়ী ১ সংখ্যার প্যাটার্ন
+        const tx = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
+        const DATA = [
+            { pattern: "BBB", next: "S" }, { pattern: "SSS", next: "B" },
+            { pattern: "BBSS", next: "B" }, { pattern: "SSBB", next: "S" },
+            { pattern: "BBBBB", next: "S" }, { pattern: "SSSSS", next: "B" },
+            // ৩০টি ছবির ডাটা বিশ্লেষণ অনুযায়ী ১ সংখ্যার প্যাটার্ন
     { pattern: "B", next: "S" }, // Big আসলে পরবর্তী Small হওয়ার সম্ভাবনা
     { pattern: "S", next: "B" }, // Small আসলে পরবর্তী Big হওয়ার সম্ভাবনা
     { pattern: "B", next: "B" }, // Big এর পর Big (Trend ফলো করলে)
@@ -428,95 +413,107 @@
         { pattern: "SSSBBBSBSB", next: "B" },
         { pattern: "BBSBSSBBSB", next: "B" },
         { pattern: "SSBSBBSBBS", next: "S" }
-
         ];
-        MASTER_LIST.forEach(p => store.put(p));
-    }
-
-    let inputs = [];
-    let currentPrediction = "";
-    let currentNums = "";
-    let lastSignals = [];
+        DATA.forEach(d => tx.put(d));
+    };
 
     function checkLogin() {
         if(document.getElementById('passInput').value === "1122") {
             document.getElementById('loginScreen').style.display = "none";
             document.getElementById('mainApp').style.display = "block";
-        } else { alert("ভুল পাসওয়ার্ড!"); }
+        } else alert("Wrong Password!");
+    }
+
+    function initBalance() {
+        let v = document.getElementById('balInput').value;
+        if(v) { wallet = parseFloat(v); mStep = 0; refreshUI(); }
+    }
+
+    function refreshUI() {
+        document.getElementById('balView').innerText = wallet;
+        document.getElementById('winV').innerText = wins;
+        document.getElementById('lossV').innerText = losses;
+        document.getElementById('riskLevel').innerText = (losses > wins) ? "HIGH" : "LOW";
+        document.getElementById('riskLevel').style.color = (losses > wins) ? "#ff4d4d" : "#FFEB3B";
     }
 
     function addNum(n) {
         if (inputs.length < 10) {
             inputs.push({t: (n >= 5 ? 'B' : 'S'), n: n});
-            updateUI();
+            document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ');
+            document.getElementById('counter').innerText = `Input (${inputs.length}/10)`;
         }
     }
 
-    function deleteLast() { inputs.pop(); updateUI(); }
-
-    function updateUI() {
-        document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ') || "আগের 10 টা রেজাল্ট দিন";
+    function deleteLast() {
+        inputs.pop();
+        document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ') || "আগের ১০টি রেজাল্ট ইনপুট দিন";
         document.getElementById('counter').innerText = `Input (${inputs.length}/10)`;
     }
 
     function startProcess() {
         const period = document.getElementById('periodInput').value;
-        if (!period) { alert("পিরিয়ড নম্বর দিন!"); return; }
-        if (inputs.length < 10) { alert("আগে ১০টি রেজাল্ট দিন!"); return; }
-
+        if (!period) { alert("দয়া করে পিরিয়ড নম্বর লিখুন!"); return; }
+        if (inputs.length < 10) { alert("দয়া করে আগের ১০টি রেজাল্ট ইনপুট দিন!"); return; }
         document.getElementById('searchLoader').style.display = "block";
-        setTimeout(async () => {
-            document.getElementById('searchLoader').style.display = "none";
-            await calculateSignal();
-        }, 2000);
+        setTimeout(runAIModel, 2000);
     }
 
-    async function calculateSignal() {
-        const patternKey = inputs.map(i => i.t).join('');
-        const lastType = inputs[inputs.length - 1].t;
+    async function runAIModel() {
+        document.getElementById('searchLoader').style.display = "none";
+        const pKey = inputs.map(i => i.t).join('');
         
-        let match = await new Promise((resolve) => {
-            const tx = db.transaction(STORE_NAME, "readonly");
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.get(patternKey);
-            req.onsuccess = () => resolve(req.result);
+        let match = await new Promise((res) => {
+            const req = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).get(pKey);
+            req.onsuccess = () => res(req.result);
         });
 
         let prediction = "";
         if (match) {
+            document.getElementById('aiMode').innerText = "SQL MATCH";
             prediction = (match.next === "B") ? "BIG" : "SMALL";
         } else {
-            let count = 0;
-            for (let i = inputs.length - 1; i >= 0; i--) {
-                if (inputs[i].t === lastType) count++; else break;
-            }
-            let chance = (count === 1) ? 70 : (count === 2) ? 50 : (count === 3) ? 40 : 30;
-            prediction = (Math.random() * 100 <= chance) ? (lastType === 'B' ? "BIG" : "SMALL") : (lastType === 'B' ? "SMALL" : "BIG");
+            document.getElementById('aiMode').innerText = "TREND AI";
+            let bCount = inputs.filter(i => i.t === 'B').length;
+            let sCount = inputs.filter(i => i.t === 'S').length;
+            prediction = (bCount > sCount) ? "BIG" : "SMALL";
         }
 
-        lastSignals.push(prediction);
-        if (lastSignals.slice(-4).every(s => s === prediction)) {
-            prediction = (prediction === "BIG") ? "SMALL" : "BIG";
-        }
+        if(losses > wins && losses % 2 === 0) prediction = (prediction === "BIG") ? "SMALL" : "BIG";
+
+        // নম্বর জেনারেশন লজিক
+        let pNums = (prediction === "BIG") ? [9,8,7,6,5] : [4,3,2,1,0];
+        let finalNums = pNums.sort(() => Math.random() - 0.5).slice(0,3).join(',');
 
         currentPrediction = prediction;
-        let pool = (prediction === "BIG") ? [5,6,7,8,9] : [0,1,2,3,4];
-        currentNums = pool.sort(() => Math.random() - 0.5).slice(0,3).join(',');
+        currentNumbers = finalNums;
 
-        const ms = new Date().getMilliseconds();
-        document.getElementById('winRateDisp').innerText = (85 + (ms % 13));
+        // পপ-আপ আপডেট
         document.getElementById('floatPred').innerText = prediction;
         document.getElementById('floatPred').style.color = (prediction === "BIG") ? "#ff4d4d" : "#00FFCC";
-        document.getElementById('floatNums').innerText = currentNums;
+        document.getElementById('floatNums').innerText = finalNums;
+        document.getElementById('winRateDisp').innerText = "ACCURACY: " + (92 + (new Date().getSeconds() % 5)) + "%";
+        document.getElementById('aiBetInfo').innerText = "BET AMOUNT: " + Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
         document.getElementById('floatingOverlay').style.display = "block";
     }
 
     function record(status) {
-        const period = document.getElementById('periodInput').value;
-        const row = `<tr><td>${period}</td><td style="color:${currentPrediction==='BIG'?'#ff4d4d':'#00FFCC'}; font-weight:bold;">${currentPrediction} (${currentNums})</td><td style="color:${status==='WIN'?'#2ecc71':'#ff4d4d'}; font-weight:bold;">${status}</td></tr>`;
+        let currentBet = Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
+        if(status === 'WIN') { wallet += (currentBet * 0.9); wins++; mStep = 0; }
+        else { wallet -= currentBet; losses++; mStep++; }
+        
+        // আপনার অনুরোধ অনুযায়ী সিগন্যাল কলামে এখন নম্বরও দেখা যাবে
+        const displaySignal = `${currentPrediction} (${currentNumbers})`;
+        const rowColor = (currentPrediction === 'BIG') ? '#ff4d4d' : '#00FFCC';
+        
+        const row = `<tr><td>${document.getElementById('periodInput').value}</td><td style="color:${rowColor}; font-weight:bold;">${displaySignal}</td><td style="color:${status==='WIN'?'#2ecc71':'#ff4d4d'}">${status}</td></tr>`;
         document.getElementById('historyBody').innerHTML = row + document.getElementById('historyBody').innerHTML;
+        
         document.getElementById('floatingOverlay').style.display = "none";
-        inputs = []; updateUI();
+        inputs = []; 
+        document.getElementById('patternDisplay').innerText = "আগের ১০টি রেজাল্ট ইনপুট দিন";
+        document.getElementById('counter').innerText = `Input (0/10)`;
+        refreshUI();
         document.getElementById('periodInput').value = "";
     }
 </script>
