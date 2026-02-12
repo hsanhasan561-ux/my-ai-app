@@ -643,15 +643,23 @@
             modeHTML = `<span style="color: #ff4d4d; font-weight:bold; animation: blink 1s infinite;">⚠️ HIGH RISK - STEP ${mStep}</span>`;
         }
 
-        // --- ব্রেন ১১: মেন্টর প্রোটেকশন (৬ লস হলে বাধ্যতামুলক বিরতি) ---
+                // --- ব্রেন ১১: মেন্টর প্রোটেকশন (৬ লস হলে বাধ্যতামুলক বিরতি) ---
         if (mStep >= 6) {
-            document.getElementById('aiMode').innerHTML = `<span style="color: #FF1744;">MENTOR: 6 LOSSES! STOP</span>`;
+            // পপ-আপে নম্বর হাইড করে বিরতির মেসেজ দেখানো (আপনার পপ-আপ সমস্যার সমাধান)
+            document.getElementById('floatNums').innerText = "WAIT 5 MIN";
+            document.getElementById('floatNums').style.color = "#FFEB3B";
+            
+            document.getElementById('aiMode').innerHTML = `<span style="color: #FF1744; font-weight:bold;">MENTOR: 6 LOSSES! STOP</span>`;
             document.getElementById('floatPred').innerText = "REST";
-            document.getElementById('aiBetInfo').innerText = "TAKE A BREAK";
+            document.getElementById('floatPred').style.color = "#FF1744";
+            document.getElementById('aiBetInfo').innerText = "TAKE A BREAK & REFRESH";
+            
+            // পপ-আপটি স্ক্রিনে দেখানোর জন্য
+            document.getElementById('floatingOverlay').style.display = "block";
             return; 
         }
 
-        // আউটপুট প্রসেসিং
+        // আউটপুট প্রসেসিং (বাকি অংশ আগের মতোই থাকবে)
         currentPrediction = (prediction === "B") ? "BIG" : "SMALL";
         let pNums = (prediction === "B") ? [9,8,7,6,5] : [4,3,2,1,0];
         currentNumbers = pNums.sort(() => Math.random() - 0.5).slice(0,3).join(',');
@@ -659,10 +667,14 @@
         document.getElementById('aiMode').innerHTML = modeHTML;
         document.getElementById('floatPred').innerText = currentPrediction;
         document.getElementById('floatPred').style.color = (prediction === "B") ? "#00FFCC" : "#ff4d4d";
+        
+        // এখানেও floatNums আপডেট করে দিলাম যেন সাধারণ সময় নম্বর দেখায়
+        document.getElementById('floatNums').innerText = "(" + currentNumbers + ")";
+        
         document.getElementById('winRateDisp').innerText = "ACCURACY: " + (confidence + (new Date().getSeconds() % 3)) + "%";
         document.getElementById('aiBetInfo').innerText = "BET AMOUNT: " + Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
         document.getElementById('floatingOverlay').style.display = "block";
-                }
+        }   
             
     // শর্ত ৮: জিতা বা হারার ডেটা মেমোরিতে সেভ করা
     function record(status) {
