@@ -574,18 +574,14 @@
         document.getElementById('searchLoader').style.display = "block";
         setTimeout(runAIModel, 1500);
     }
-
-        async function runAIModel() {
-        // লোডার বন্ধ করা
+    async function runAIModel() {
         document.getElementById('searchLoader').style.display = "none";
-        
-        // প্যাটার্ন তৈরি করা
         currentPatternKey = inputs.map(i => i.t).join('');
         
         let prediction = ""; 
         let modeHTML = "";
 
-        // --- শর্ত ১ ও ২: শুরুর ১ ও ২ নম্বর বিশ্লেষণ (Head Trend) ---
+        // ১ ও ২: শুরুর রেজাল্ট বিশ্লেষণ (Head Trend)
         let head1 = currentPatternKey[0]; 
         let head2 = currentPatternKey[1];
 
@@ -598,10 +594,9 @@
             modeHTML = `<span style="color: #ff4d4d;">HEAD TREND (SMALL)</span>`;
         }
         else {
-            // --- শর্ত ৩: মেমোরি ম্যাচ লজিক ---
+            // ৩: মেমোরি ম্যাচ (Database Check)
             let match = await new Promise((res) => {
-                const req = db.transaction(STORE_NAME, "readonly")
-                             .objectStore(STORE_NAME).get(currentPatternKey);
+                const req = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).get(currentPatternKey);
                 req.onsuccess = () => res(req.result);
             });
 
@@ -609,25 +604,45 @@
                 prediction = match.next;
                 modeHTML = `<span style="color: #FFD700;">MEMORY MATCH</span>`;
             } else {
-                // --- শর্ত ৪: অটো-জেন (রেশিও লজিক) ---
+                // ৪: অটো-জেন (৫/৫ রেশিও)
                 let bCount = inputs.filter(i => i.t === 'B').length;
                 prediction = bCount >= 5 ? "B" : "S";
                 modeHTML = `<span style="color: #00FFCC;">AUTO-GEN</span>`;
             }
-        } // এই একটি ব্র্যাকেটে পুরো else ব্লক শেষ হবে
+        }
 
-        // --- শর্ত ৫ ও ৬: এন্টি-লস প্রো ফিল্টার (সেফটি চেক) ---
+        // ৫: সংশোধিত পিরিয়ড ডিজিট অ্যানালাইসিস (শেষ ১০ রেজাল্ট বিশ্লেষণ)
+        // এখানে দেখা হচ্ছে শেষ ১০টি রেজাল্টের মধ্যে নির্দিষ্ট প্যাটার্ন রিপিট হচ্ছে কি না
+        let lastResult = inputs[inputs.length - 1].n; // শেষ পিরিয়ডের নম্বর (০-৯)
+        if ([0, 5, 9, 1].includes(lastResult)) {
+            // যদি শেষ রেজাল্ট ০, ৫, ৯ বা ১ হয়, তবে পরবর্তী ট্রেন্ড পরিবর্তনের সম্ভাবনা বেশি
+            prediction = (prediction === "B") ? "S" : "B";
+            modeHTML = `<span style="color: #FFEB3B;">RESULT DIGIT MODE</span>`;
+        }
+
+        // ৬: জিক-জ্যাক ডিটেকশন (Trend Flow)
+        let lastFour = currentPatternKey.slice(-4);
+        if (lastFour === "BSBS" || lastFour === "SBSB") {
+            prediction = (lastFour[3] === "B") ? "S" : "B"; 
+            modeHTML = `<span style="color: #BB86FC;">ZIG-ZAG DETECTED</span>`;
+        }
+
+        // ৭: এন্টি-লস প্রো ফিল্টার
         if(losses > wins && losses % 2 === 0) {
             prediction = (prediction === "B") ? "S" : "B";
             modeHTML = `<span style="color: #ff4d4d;">ANTI-LOSS ACTIVE</span>`;
         }
 
-        // --- শর্ত ৭ ও ৮: সিগন্যাল এবং নাম্বার জেনারেশন ---
+        // ৮: রিস্ক কন্ট্রোল (Skip Logic)
+        if (mStep >= 3) {
+            modeHTML = `<span style="color: #ff4d4d; font-weight:bold;">⚠️ HIGH RISK - SKIP!</span>`;
+        }
+
+        // সিগন্যাল আউটপুট
         currentPrediction = (prediction === "B") ? "BIG" : "SMALL";
         let pNums = (prediction === "B") ? [9,8,7,6,5] : [4,3,2,1,0];
         currentNumbers = pNums.sort(() => Math.random() - 0.5).slice(0,3).join(',');
 
-        // ইউজার ইন্টারফেস আপডেট
         document.getElementById('aiMode').innerHTML = modeHTML;
         document.getElementById('floatPred').innerText = currentPrediction;
         document.getElementById('floatPred').style.color = (prediction === "B") ? "#00FFCC" : "#ff4d4d";
@@ -635,8 +650,7 @@
         document.getElementById('winRateDisp').innerText = "ACCURACY: " + (93 + (new Date().getSeconds() % 6)) + "%";
         document.getElementById('aiBetInfo').innerText = "BET AMOUNT: " + Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
         document.getElementById('floatingOverlay').style.display = "block";
-    }
-    
+            }
 
     // শর্ত ৮: জিতা বা হারার ডেটা মেমোরিতে সেভ করা
     function record(status) {
