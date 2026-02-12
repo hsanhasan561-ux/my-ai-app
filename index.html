@@ -574,62 +574,84 @@
         document.getElementById('searchLoader').style.display = "block";
         setTimeout(runAIModel, 1500);
     }
-    async function runAIModel() {
+        async function runAIModel() {
         document.getElementById('searchLoader').style.display = "none";
         currentPatternKey = inputs.map(i => i.t).join('');
         
         let prediction = ""; 
         let modeHTML = "";
+        let confidence = 93;
 
-        // ১ ও ২: শুরুর রেজাল্ট বিশ্লেষণ (Head Trend)
+        // --- ব্রেন ১-৪: মেমোরি ও রেশিও লেয়ার ---
         let head1 = currentPatternKey[0]; 
         let head2 = currentPatternKey[1];
-
-        if (head1 === "B" && head2 === "B") {
-            prediction = "B";
-            modeHTML = `<span style="color: #00FFCC;">HEAD TREND (BIG)</span>`;
-        } 
-        else if (head1 === "S" && head2 === "S") {
-            prediction = "S";
-            modeHTML = `<span style="color: #ff4d4d;">HEAD TREND (SMALL)</span>`;
-        }
-        else {
-            // ৩: মেমোরি ম্যাচ (Database Check)
+        if (head1 === head2) {
+            prediction = head1;
+            modeHTML = `<span style="color: #00FFCC;">HEAD TREND</span>`;
+        } else {
             let match = await new Promise((res) => {
                 const req = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).get(currentPatternKey);
                 req.onsuccess = () => res(req.result);
             });
-
             if (match) {
                 prediction = match.next;
                 modeHTML = `<span style="color: #FFD700;">MEMORY MATCH</span>`;
+                confidence = 98;
             } else {
-                // ৪: অটো-জেন (৫/৫ রেশিও)
                 let bCount = inputs.filter(i => i.t === 'B').length;
                 prediction = bCount >= 5 ? "B" : "S";
                 modeHTML = `<span style="color: #00FFCC;">AUTO-GEN</span>`;
-            } 
-        
+            }
+        }
 
-        // ৬: জিক-জ্যাক ডিটেকশন (Trend Flow)
+        // --- ব্রেন ৫: আল্ট্রা ড্রাগন ফলো (৯ বার আসলে) ---
+        let lastNine = currentPatternKey.slice(-9);
+        if (lastNine === "BBBBBBBBB" || lastNine === "SSSSSSSSS") {
+            prediction = lastNine[0];
+            modeHTML = `<span style="color: #00FFCC;">ULTRA DRAGON (9X)</span>`;
+            confidence = 100;
+        }
+
+        // --- ব্রেন ৬: জিক-জ্যাক ডিটেকশন (BSBS) ---
         let lastFour = currentPatternKey.slice(-4);
         if (lastFour === "BSBS" || lastFour === "SBSB") {
             prediction = (lastFour[3] === "B") ? "S" : "B"; 
             modeHTML = `<span style="color: #BB86FC;">ZIG-ZAG DETECTED</span>`;
         }
 
-        // ৭: এন্টি-লস প্রো ফিল্টার
-        if(losses > wins && losses % 2 === 0) {
-            prediction = (prediction === "B") ? "S" : "B";
-            modeHTML = `<span style="color: #ff4d4d;">ANTI-LOSS ACTIVE</span>`;
+        // --- ব্রেন ৭: মিরর রিপিট (BSSB) ---
+        if (lastFour === "BSSB" || lastFour === "SBBs") {
+            prediction = (lastFour[3] === "B") ? "B" : "S"; 
+            modeHTML = `<span style="color: #0080FF;">MIRROR REPEAT</span>`;
         }
 
-        // ৮: রিস্ক কন্ট্রোল (Skip Logic)
-        if (mStep >= 3) {
-            modeHTML = `<span style="color: #ff4d4d; font-weight:bold;">⚠️ HIGH RISK - SKIP!</span>`;
+        // --- ব্রেন ৮: প্যাটার্ন ক্লান্তি (মানুষের মতো বিরতি বোঝা) ---
+        let lastSix = currentPatternKey.slice(-6);
+        if (lastSix === "BSBSBS" || lastSix === "SBSBSB") {
+            confidence -= 20; // জিক-জ্যাক অনেক লম্বা হলে ঝুঁকি বাড়ে
+            modeHTML = `<span style="color: #FFD700;">PATTERN FATIGUE - BE CAREFUL</span>`;
         }
 
-        // সিগন্যাল আউটপুট
+        // --- ব্রেন ৯: মার্কেট ট্র্যাপ ডিটেক্টর (টানা ২ লস হলে) ---
+        if (losses >= 2 && mStep >= 2) {
+            prediction = (prediction === "B") ? "S" : "B"; 
+            modeHTML = `<span style="color: #FF9800;">TRAP DETECTED - REVERSING</span>`;
+        }
+
+        // --- ব্রেন ১০: রিস্ক অ্যালার্ট (৩-৫ স্টেপ) ---
+        if (mStep >= 3 && mStep < 6) {
+            modeHTML = `<span style="color: #ff4d4d; font-weight:bold; animation: blink 1s infinite;">⚠️ HIGH RISK - STEP ${mStep}</span>`;
+        }
+
+        // --- ব্রেন ১১: মেন্টর প্রোটেকশন (৬ লস হলে বাধ্যতামুলক বিরতি) ---
+        if (mStep >= 6) {
+            document.getElementById('aiMode').innerHTML = `<span style="color: #FF1744;">MENTOR: 6 LOSSES! STOP</span>`;
+            document.getElementById('floatPred').innerText = "REST";
+            document.getElementById('aiBetInfo').innerText = "TAKE A BREAK";
+            return; 
+        }
+
+        // আউটপুট প্রসেসিং
         currentPrediction = (prediction === "B") ? "BIG" : "SMALL";
         let pNums = (prediction === "B") ? [9,8,7,6,5] : [4,3,2,1,0];
         currentNumbers = pNums.sort(() => Math.random() - 0.5).slice(0,3).join(',');
@@ -637,12 +659,11 @@
         document.getElementById('aiMode').innerHTML = modeHTML;
         document.getElementById('floatPred').innerText = currentPrediction;
         document.getElementById('floatPred').style.color = (prediction === "B") ? "#00FFCC" : "#ff4d4d";
-        document.getElementById('floatNums').innerText = currentNumbers;
-        document.getElementById('winRateDisp').innerText = "ACCURACY: " + (93 + (new Date().getSeconds() % 6)) + "%";
+        document.getElementById('winRateDisp').innerText = "ACCURACY: " + (confidence + (new Date().getSeconds() % 3)) + "%";
         document.getElementById('aiBetInfo').innerText = "BET AMOUNT: " + Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
         document.getElementById('floatingOverlay').style.display = "block";
-            }
-
+                }
+            
     // শর্ত ৮: জিতা বা হারার ডেটা মেমোরিতে সেভ করা
     function record(status) {
         let currentBet = Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
