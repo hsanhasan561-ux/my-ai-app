@@ -608,17 +608,8 @@
                 let bCount = inputs.filter(i => i.t === 'B').length;
                 prediction = bCount >= 5 ? "B" : "S";
                 modeHTML = `<span style="color: #00FFCC;">AUTO-GEN</span>`;
-            }
-        }
-
-        // ৫: সংশোধিত পিরিয়ড ডিজিট অ্যানালাইসিস (শেষ ১০ রেজাল্ট বিশ্লেষণ)
-        // এখানে দেখা হচ্ছে শেষ ১০টি রেজাল্টের মধ্যে নির্দিষ্ট প্যাটার্ন রিপিট হচ্ছে কি না
-        let lastResult = inputs[inputs.length - 1].n; // শেষ পিরিয়ডের নম্বর (০-৯)
-        if ([0, 5, 9, 1].includes(lastResult)) {
-            // যদি শেষ রেজাল্ট ০, ৫, ৯ বা ১ হয়, তবে পরবর্তী ট্রেন্ড পরিবর্তনের সম্ভাবনা বেশি
-            prediction = (prediction === "B") ? "S" : "B";
-            modeHTML = `<span style="color: #FFEB3B;">RESULT DIGIT MODE</span>`;
-        }
+            } 
+        
 
         // ৬: জিক-জ্যাক ডিটেকশন (Trend Flow)
         let lastFour = currentPatternKey.slice(-4);
