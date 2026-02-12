@@ -575,42 +575,68 @@
         setTimeout(runAIModel, 1500);
     }
 
-    async function runAIModel() {
+        async function runAIModel() {
+        // লোডার বন্ধ করা
         document.getElementById('searchLoader').style.display = "none";
+        
+        // প্যাটার্ন তৈরি করা
         currentPatternKey = inputs.map(i => i.t).join('');
         
-        // শর্ত ১ ও ৮: মেমোরি থেকে প্যাটার্ন খোঁজা
-        let match = await new Promise((res) => {
-            const req = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).get(currentPatternKey);
-            req.onsuccess = () => res(req.result);
-        });
+        let prediction = ""; 
+        let modeHTML = "";
 
-        let prediction = "";
-        if (match) {
-            document.getElementById('aiMode').innerText = "MEMORY MATCH";
-            prediction = match.next;
-        } else {
-            // শর্ত ৭: ট্রেন্ড এনালাইসিস (Trend Logic)
-            document.getElementById('aiMode').innerText = "AUTO-GEN";
-            let bCount = inputs.filter(i => i.t === 'B').length;
-            let sCount = inputs.filter(i => i.t === 'S').length;
-            prediction = (bCount > sCount) ? "B" : "S";
+        // --- শর্ত ১ ও ২: শুরুর ১ ও ২ নম্বর বিশ্লেষণ (Head Trend) ---
+        let head1 = currentPatternKey[0]; 
+        let head2 = currentPatternKey[1];
+
+        if (head1 === "B" && head2 === "B") {
+            prediction = "B";
+            modeHTML = `<span style="color: #00FFCC;">HEAD TREND (BIG)</span>`;
+        } 
+        else if (head1 === "S" && head2 === "S") {
+            prediction = "S";
+            modeHTML = `<span style="color: #ff4d4d;">HEAD TREND (SMALL)</span>`;
+        }
+        else {
+            // --- শর্ত ৩: মেমোরি ম্যাচ লজিক ---
+            let match = await new Promise((res) => {
+                const req = db.transaction(STORE_NAME, "readonly")
+                             .objectStore(STORE_NAME).get(currentPatternKey);
+                req.onsuccess = () => res(req.result);
+            });
+
+            if (match) {
+                prediction = match.next;
+                modeHTML = `<span style="color: #FFD700;">MEMORY MATCH</span>`;
+            } else {
+                // --- শর্ত ৪: অটো-জেন (রেশিও লজিক) ---
+                let bCount = inputs.filter(i => i.t === 'B').length;
+                prediction = bCount >= 5 ? "B" : "S";
+                modeHTML = `<span style="color: #00FFCC;">AUTO-GEN</span>`;
+            }
+        } // এই একটি ব্র্যাকেটে পুরো else ব্লক শেষ হবে
+
+        // --- শর্ত ৫ ও ৬: এন্টি-লস প্রো ফিল্টার (সেফটি চেক) ---
+        if(losses > wins && losses % 2 === 0) {
+            prediction = (prediction === "B") ? "S" : "B";
+            modeHTML = `<span style="color: #ff4d4d;">ANTI-LOSS ACTIVE</span>`;
         }
 
-        // শর্ত ৬: এন্টি-লস প্রো ফিল্টার
-        if(losses > wins && losses % 2 === 0) prediction = (prediction === "B") ? "S" : "B";
-
+        // --- শর্ত ৭ ও ৮: সিগন্যাল এবং নাম্বার জেনারেশন ---
         currentPrediction = (prediction === "B") ? "BIG" : "SMALL";
         let pNums = (prediction === "B") ? [9,8,7,6,5] : [4,3,2,1,0];
         currentNumbers = pNums.sort(() => Math.random() - 0.5).slice(0,3).join(',');
 
+        // ইউজার ইন্টারফেস আপডেট
+        document.getElementById('aiMode').innerHTML = modeHTML;
         document.getElementById('floatPred').innerText = currentPrediction;
-        document.getElementById('floatPred').style.color = (prediction === "B") ? "#ff4d4d" : "#00FFCC";
+        document.getElementById('floatPred').style.color = (prediction === "B") ? "#00FFCC" : "#ff4d4d";
         document.getElementById('floatNums').innerText = currentNumbers;
         document.getElementById('winRateDisp').innerText = "ACCURACY: " + (93 + (new Date().getSeconds() % 6)) + "%";
         document.getElementById('aiBetInfo').innerText = "BET AMOUNT: " + Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
         document.getElementById('floatingOverlay').style.display = "block";
     }
+    
 
     // শর্ত ৮: জিতা বা হারার ডেটা মেমোরিতে সেভ করা
     function record(status) {
