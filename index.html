@@ -724,64 +724,51 @@ async function runAIModel() {
         refreshUI();
         document.getElementById('periodInput').value = "";
     }
-// ==========================================
-// ১. গেম ওপেন করার ফাংশন
-// ==========================================
-function openGame() {
-    // এখানে DK Win সাইটের লিঙ্কটি দেওয়া হয়েছে
-    const gameUrl = "https://dkwin9.com/#/saasLottery";
-    window.open(gameUrl, "_blank");
-    alert("গেম ওপেন হয়েছে! এবার গেমের ট্যাবে গিয়ে কনসোল কোডটি রান করুন।");
-}
-
-// ==========================================
-// ২. অটো-রিডার থেকে আসা ডাটা গ্রহণ এবং আপডেট লজিক
-// ==========================================
-// ==========================================
-// ২. অটো-রিডার থেকে আসা ডাটা গ্রহণ এবং আপডেট লজিক
-// ==========================================
-window.addEventListener("message", (event) => {
-    if (event.data && event.data.type === 'AUTO_INPUT') {
-        let detectedSize = event.data.data;
-        
-        // ডুপ্লিকেট ডাটা চেক
-        if (typeof inputs !== 'undefined' && inputs.length > 0 && inputs[inputs.length - 1].t === detectedSize) {
-            console.log("Duplicate ignored: " + detectedSize);
-            return;
+        // ১. গেম ওপেন করার ফাংশন
+        function openGame() {
+            const gameUrl = "https://dkwin9.com/#/saasLottery";
+            window.open(gameUrl, "_blank");
+            alert("গেম ওপেন হয়েছে! এবার গেমের ট্যাবে গিয়ে কনসোল কোডটি রান করুন।");
         }
 
-        // ইনপুট লিস্টে ডাটা যোগ করা
-        if (typeof inputs !== 'undefined') {
-            if (inputs.length >= 10) inputs.shift();
-            inputs.push({ t: detectedSize });
-        }
-        
-        console.log("✅ Auto-Input Received: " + detectedSize);
-        
-        // ==========================================
-        // ৩. সরাসরি আপনার স্ক্রিন আপডেট করার লজিক (ভুল সংশোধন)
-        // ==========================================
-        
-        // কাউন্টার আপডেট (Input 0/10 থেকে সংখ্যা বাড়ানো)
-        const counterEl = document.getElementById('counter');
-        if (counterEl) {
-            counterEl.innerText = `Input (${inputs.length}/10)`;
-        }
+        // ২. অটো-রিডার থেকে আসা ডাটা গ্রহণ এবং আপডেট লজিক
+        window.addEventListener("message", (event) => {
+            if (event.data && event.data.type === 'AUTO_INPUT') {
+                let detectedSize = event.data.data;
+                
+                // ডুপ্লিকেট ডাটা চেক
+                if (typeof inputs !== 'undefined' && inputs.length > 0 && inputs[inputs.length - 1].t === detectedSize) {
+                    console.log("Duplicate ignored: " + detectedSize);
+                    return;
+                }
 
-        // প্যাটার্ন ডিসপ্লে আপডেট (রেজাল্ট বক্সের লেখা পরিবর্তন)
-        const displayEl = document.getElementById('patternDisplay');
-        if (displayEl) {
-            displayEl.innerText = inputs.map(i => i.t).join(', ');
-        }
+                // ইনপুট লিস্টে ডাটা যোগ করা
+                if (typeof inputs !== 'undefined') {
+                    if (inputs.length >= 10) inputs.shift();
+                    inputs.push({ t: detectedSize });
+                }
+                
+                console.log("✅ Auto-Input Received: " + detectedSize);
+                
+                // ৩. স্ক্রিন আপডেট লজিক
+                const counterEl = document.getElementById('counter');
+                if (counterEl) {
+                    counterEl.innerText = `Input (${inputs.length}/10)`;
+                }
 
-        // ডাটা পাওয়ার সাথে সাথে অটো মডেল রান করা
-        if (typeof runAIModel === "function") {
-            runAIModel();
-        }
-    }
-}, false);
+                const displayEl = document.getElementById('patternDisplay');
+                if (displayEl) {
+                    displayEl.innerText = inputs.map(i => i.t).join(', ');
+                }
 
-    
-</script>
+                // সিগন্যাল রান করা
+                if (typeof runAIModel === "function") {
+                    runAIModel();
+                }
+            }
+        }, false);
+    </script>
 </body>
 </html>
+
+
