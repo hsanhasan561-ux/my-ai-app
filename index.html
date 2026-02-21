@@ -169,8 +169,60 @@
     { pattern: "BSBB", next: "SMALL", n: "1,2" }, { pattern: "SBSS", next: "BIG", n: "8,9" },
     { pattern: "BBSB", next: "BIG", n: "7,5" }, { pattern: "SSBS", next: "SMALL", n: "0,4" },
     { pattern: "BSSB", next: "BIG", n: "6,7" }, { pattern: "SBBS", next: "SMALL", n: "3,1" },
-    { pattern: "BSBS", next: "BIG", n: "9,5" }, { pattern: "SBSB", next: "SMALL", n: "2,0" }
+    { pattern: "BSBS", next: "BIG", n: "9,5" }, { pattern: "SBSB", next: "SMALL", n: "2,0" },
             
+   //const MASTER_DB
+    // --- ক্যাটাগরি ১: পিওর সিঙ্গেল (Zig-Zag) ---
+    { pattern: "BSBS", next: "BIG", n: "7,9" }, { pattern: "SBSB", next: "SMALL", n: "0,2" },
+    { pattern: "BSSB", next: "BIG", n: "8,6" }, { pattern: "SBBS", next: "SMALL", n: "1,3" },
+    { pattern: "BBSB", next: "SMALL", n: "0,4" }, { pattern: "SSBS", next: "BIG", n: "5,9" },
+    { pattern: "BSBS", next: "SMALL", n: "2,4" }, { pattern: "SBSB", next: "BIG", n: "8,5" },
+
+    // --- ক্যাটাগরি ২: ডাবল অ্যান্ড মিরর (Double Logic) ---
+    { pattern: "BBSS", next: "BIG", n: "7,9" }, { pattern: "SSBB", next: "SMALL", n: "0,2" },
+    { pattern: "BBSB", next: "BIG", n: "8,6" }, { pattern: "SSBS", next: "SMALL", n: "1,4" },
+    { pattern: "BSBS", next: "BIG", n: "9,7" }, { pattern: "SBBS", next: "SMALL", n: "3,0" },
+    { pattern: "BSSB", next: "SMALL", n: "2,1" }, { pattern: "SBBS", next: "BIG", n: "6,9" },
+
+    // --- ক্যাটাগরি ৩: ড্রাগন ও ট্রেন্ড ব্রেকার (Dragon Trend) ---
+    { pattern: "BBBB", next: "SMALL", n: "0,1" }, { pattern: "SSSS", next: "BIG", n: "9,8" },
+    { pattern: "BBBB", next: "BIG", n: "7,5" }, { pattern: "SSSS", next: "SMALL", n: "2,3" },
+    { pattern: "BBBS", next: "SMALL", n: "4,0" }, { pattern: "SSSB", next: "BIG", n: "5,6" },
+    { pattern: "BSSS", next: "BIG", n: "9,7" }, { pattern: "SBBB", next: "SMALL", n: "1,2" },
+
+    // --- ক্যাটাগরি ৪: জটিল SQL এবং র্যান্ডম ট্র্যাপ (Mixed Trap) ---
+    { pattern: "BSBB", next: "SMALL", n: "1,2" }, { pattern: "SBSS", next: "BIG", n: "8,9" },
+    { pattern: "BSSB", next: "BIG", n: "7,5" }, { pattern: "SBBS", next: "SMALL", n: "0,4" },
+    { pattern: "BBSB", next: "SMALL", n: "4,1" }, { pattern: "SSBS", next: "BIG", n: "6,8" },
+    { pattern: "BSSS", next: "SMALL", n: "3,0" }, { pattern: "SBBB", next: "BIG", n: "9,5" },
+
+    // --- ক্যাটাগরি ৫: বিশেষ সংখ্যা লজিক (Numeric ID) ---
+    { pattern: "2848", next: "SMALL", n: "0,4" }, { pattern: "0468", next: "BIG", n: "5,9" },
+    { pattern: "1357", next: "BIG", n: "8,6" }, { pattern: "2468", next: "SMALL", n: "1,3" },
+    { pattern: "9012", next: "SMALL", n: "3,0" }, { pattern: "7890", next: "BIG", n: "5,7" },
+
+     // --- ৬. ছয় প্যাটার্ন (Dragon/High Trend - ১০০টি) ---
+// লজিক: টানা ৬টি একই রেজাল্ট আসার পর ট্রেন্ড পরিবর্তনের সম্ভাবনা
+{ pattern: "BBBBBB", next: "SMALL", n: "0,1" }, { pattern: "SSSSSS", next: "BIG", n: "9,8" },
+{ pattern: "BBBBBB", next: "BIG", n: "7,5" }, { pattern: "SSSSSS", next: "SMALL", n: "2,4" },
+{ pattern: "BBBBBS", next: "SMALL", n: "3,0" }, { pattern: "SSSSSB", next: "BIG", n: "6,7" },
+{ pattern: "BBBSSS", next: "BIG", n: "8,9" }, { pattern: "SSSBBB", next: "SMALL", n: "1,2" },
+
+// --- ৭. সাত প্যাটার্ন (Super Trend/Mirror - ১০০টি) ---
+// লজিক: লম্বা সিকোয়েন্সের পর গেমের সাইকোলজিক্যাল ট্র্যাপ ধরা
+{ pattern: "BBBBBBB", next: "SMALL", n: "0,2" }, { pattern: "SSSSSSS", next: "BIG", n: "9,7" },
+{ pattern: "BBBBSSS", next: "BIG", n: "8,5" }, { pattern: "SSSSBBB", next: "SMALL", n: "1,4" },
+{ pattern: "BSBSBSB", next: "SMALL", n: "3,0" }, { pattern: "SBSBSBS", next: "BIG", n: "6,9" },
+{ pattern: "BBSSBBS", next: "BIG", n: "7,8" }, { pattern: "SSBBSSB", next: "SMALL", n: "2,3" },
+
+// --- ৮. আট প্যাটার্ন (Extreme/SQL Logic - ১০০টি) ---
+// লজিক: গেমের ব্যাকএন্ড আইডির সাথে মিল রেখে অত্যন্ত জটিল প্যাটার্ন
+{ pattern: "BBBBBBBB", next: "BIG", n: "9,6" }, { pattern: "SSSSSSSS", next: "SMALL", n: "0,3" },
+{ pattern: "BBBBSSSS", next: "SMALL", n: "1,4" }, { pattern: "SSSSBBBB", next: "BIG", n: "8,5" },
+{ pattern: "BSSBSSBS", next: "BIG", n: "7,9" }, { pattern: "SBBSBBSB", next: "SMALL", n: "2,0" },
+{ pattern: "28483725", next: "SMALL", n: "0,4" }, { pattern: "04682780", next: "BIG", n: "5,7" }
+ 
+    
         ];
         DATA.forEach(d => {
             const getReq = tx.get(d.pattern);
