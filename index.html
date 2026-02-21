@@ -199,17 +199,17 @@
     }
 
     function addNum(n) {
-        if (inputs.length < 10) {
+        if (inputs.length < 4) {
             inputs.push({t: (n >= 5 ? 'B' : 'S'), n: n});
             document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ');
-            document.getElementById('counter').innerText = `Input (${inputs.length}/10)`;
+            document.getElementById('counter').innerText = `Input (${inputs.length}/4)`;
         }
     }
 
     function deleteLast() {
         inputs.pop();
-        document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ') || "আগের ১০টি রেজাল্ট ইনপুট দিন";
-        document.getElementById('counter').innerText = `Input (${inputs.length}/10)`;
+        document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ') || "আগের 4টি রেজাল্ট ইনপুট দিন";
+        document.getElementById('counter').innerText = `Input (${inputs.length}/4)`;
     }
 
     async function runAIModel() {
@@ -217,7 +217,7 @@
         const periodVal = document.getElementById('periodInput').value;
         if (!periodVal) return; // অটো স্ক্যান মোডে বিরক্ত না করার জন্য এলার্ট বন্ধ করা হয়েছে
 
-        if (inputs.length < 10) return; // ১০টি ইনপুট না থাকলে ফাংশন চলবে না
+        if (inputs.length < 4) return; // ১০টি ইনপুট না থাকলে ফাংশন চলবে না
 
         const loader = document.getElementById('searchLoader');
         if(loader) loader.style.display = "block";
