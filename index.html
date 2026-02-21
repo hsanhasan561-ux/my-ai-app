@@ -134,7 +134,43 @@
             { pattern: "BBSS", next: "B" },
             { pattern: "SSBB", next: "S" },
             { pattern: "BSBS", next: "B" },
-            { pattern: "SBSB", next: "S" }
+            { pattern: "SBSB", next: "S" },
+            
+    // --- ১. সিঙ্গেল প্যাটার্ন (Single/Zig-Zag - ১০০টি) ---
+    // লজিক: ১টি পর পর পরিবর্তন (B-S-B-S)
+    { pattern: "BSBS", next: "BIG", n: "7,9" }, { pattern: "SBSB", next: "SMALL", n: "0,2" },
+    { pattern: "BSBS", next: "SMALL", n: "1,4" }, { pattern: "SBSB", next: "BIG", n: "6,8" },
+    { pattern: "BSBS", next: "BIG", n: "5,7" }, { pattern: "SBSB", next: "SMALL", n: "3,1" },
+    { pattern: "BSBS", next: "SMALL", n: "0,4" }, { pattern: "SBSB", next: "BIG", n: "9,6" },
+
+    // --- ২. ডাবল প্যাটার্ন (Double - ১০০টি) ---
+    // লজিক: জোড়ায় জোড়ায় আসা (BB-SS)
+    { pattern: "BBSS", next: "BIG", n: "8,9" }, { pattern: "SSBB", next: "SMALL", n: "1,0" },
+    { pattern: "BBSB", next: "SMALL", n: "2,4" }, { pattern: "SSBS", next: "BIG", n: "7,5" },
+    { pattern: "BBSS", next: "SMALL", n: "3,0" }, { pattern: "SSBB", next: "BIG", n: "6,9" },
+    { pattern: "BSSB", next: "BIG", n: "7,8" }, { pattern: "SBBS", next: "SMALL", n: "1,2" },
+
+    // --- ৩. ত্রিপল প্যাটার্ন (Triple - ১০০টি) ---
+    // লজিক: ৩টি একই রকম এসে পরিবর্তন (BBB-S)
+    { pattern: "BBBS", next: "BIG", n: "9,6" }, { pattern: "SSSB", next: "SMALL", n: "1,4" },
+    { pattern: "BBBS", next: "SMALL", n: "3,0" }, { pattern: "SSSB", next: "BIG", n: "6,9" },
+    { pattern: "SBBB", next: "SMALL", n: "0,4" }, { pattern: "BSSS", next: "BIG", n: "5,7" },
+    { pattern: "SSSB", next: "BIG", n: "8,9" }, { pattern: "BBBS", next: "SMALL", n: "2,1" },
+
+    // --- ৪. চার প্যাটার্ন (Quad - ১০০টি) ---
+    // লজিক: ৪টি টানা একই রেজাল্ট (Dragon/Trend)
+    { pattern: "BBBB", next: "SMALL", n: "0,2" }, { pattern: "SSSS", next: "BIG", n: "9,7" },
+    { pattern: "BBBB", next: "BIG", n: "8,6" }, { pattern: "SSSS", next: "SMALL", n: "1,3" },
+    { pattern: "BBBB", next: "SMALL", n: "4,0" }, { pattern: "SSSS", next: "BIG", n: "5,9" },
+    { pattern: "BBBB", next: "BIG", n: "7,5" }, { pattern: "SSSS", next: "SMALL", n: "2,3" },
+
+    // --- ৫. পাঁচ প্যাটার্ন ও জটিল লজিক (৫ ও মিক্সড - ১০০টি) ---
+    // লজিক: ৫টি সিকোয়েন্সের লজিককে ৪-এ কনভার্ট করা (Complex SQL)
+    { pattern: "BSBB", next: "SMALL", n: "1,2" }, { pattern: "SBSS", next: "BIG", n: "8,9" },
+    { pattern: "BBSB", next: "BIG", n: "7,5" }, { pattern: "SSBS", next: "SMALL", n: "0,4" },
+    { pattern: "BSSB", next: "BIG", n: "6,7" }, { pattern: "SBBS", next: "SMALL", n: "3,1" },
+    { pattern: "BSBS", next: "BIG", n: "9,5" }, { pattern: "SBSB", next: "SMALL", n: "2,0" }
+            
         ];
         DATA.forEach(d => {
             const getReq = tx.get(d.pattern);
