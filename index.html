@@ -3,416 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAJMUL VIP AI V10 - 8 CORE ENGINE</title>
+    <title>WinGo Pattern Intelligence Pro - Najmul V10</title>
     <style>
-        :root { --primary-bg: #040608; --panel-bg: #0d1117; --accent: #00FFCC; --delete-red: #ff4d4d; }
-        body { background-color: var(--primary-bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; }
-        .login-box { background: var(--panel-bg); padding: 30px; border-radius: 15px; border: 1px solid var(--accent); text-align: center; }
-        #mainApp { display: none; width: 100%; max-width: 450px; text-align: center; }
-        .ai-status-card { background: var(--panel-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 15px; margin-bottom: 15px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; box-sizing: border-box;}
-        .stat-box { text-align: left; border-left: 2px solid #333; padding-left: 10px; }
-        .stat-box label { font-size: 10px; color: #888; display: block; text-transform: uppercase; }
-        .stat-box span { font-size: 15px; font-weight: bold; color: #fff; }
-        .number-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
-        .num-btn { border: none; border-radius: 5px; height: 40px; color: white; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .n5, .n6 { background: #ff4d4d; } .n7 { background: #9b59b6; } .n8, .n9 { background: #34495e; }
-        .n0, .n1 { background: #2ecc71; } .n2 { background: #16a085; } .n3, .n4 { background: #f39c12; }
-        .bg-blue { background: #3498db; font-size: 10px; } .bg-orange { background: #e67e22; font-size: 10px; }
-        #patternDisplay { width: 100%; padding: 20px; border-radius: 8px; border: 2px solid var(--accent); background: #111; color: var(--accent); margin-bottom: 15px; min-height: 70px; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; box-sizing: border-box;}
-        input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; color: white; border: 1px solid #333; border-radius: 8px; box-sizing: border-box; outline: none; }
-        .btn-get { background: linear-gradient(90deg, #00FFCC, #00d2ff); color: #000; width: 100%; font-weight: 900; height: 55px; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3); }
-        #floatingOverlay { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; background: rgba(13, 20, 30, 0.98); border: 2.5px solid var(--accent); border-radius: 15px; padding: 20px; z-index: 10000; text-align: center; box-shadow: 0 0 40px rgba(0,255,204,0.6); }
-        .float-res { font-size: 42px; font-weight: 900; margin: 5px 0; text-transform: uppercase; }
-        .ai-bet-info { background: #333; color: #00FFCC; padding: 8px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; border: 1px dashed var(--accent); }
-        .history-section { width: 100%; margin-top: 25px; background: #0d1117; border-radius: 10px; padding: 12px; border: 1px solid #222; overflow-x: auto; }
-        table { width: 100%; font-size: 13px; border-collapse: collapse; }
-        th, td { padding: 10px; border-bottom: 1px solid #222; text-align: center; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Arial', sans-serif; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        #smart-hud {
+            position: fixed; top: 10px; right: 10px; width: 240px;
+            background: rgba(0, 0, 0, 0.9); color: #fff; padding: 15px; border-radius: 20px;
+            z-index: 9999; border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+        }
+
+        .timer-box { font-size: 38px; font-weight: bold; color: #ffcc00; text-align: center; margin-bottom: 5px; }
+        .period-box { font-size: 12px; color: #00ffcc; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px; }
+        .stat-item { background: rgba(255,255,255,0.1); padding: 5px; border-radius: 8px; text-align: center; }
+        .stat-item b { display: block; color: #00ffcc; font-size: 13px; }
+
+        #pattern-alert {
+            display: none; position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%);
+            width: 320px; background: #111; border: 4px solid #ffcc00; border-radius: 35px;
+            padding: 20px; text-align: center; z-index: 10000; color: #fff;
+            box-shadow: 0 0 50px rgba(255, 204, 0, 0.5);
+        }
+
+        .result-box { font-size: 60px; font-weight: 900; color: #ffcc00; margin: 10px 0; border: 1px dashed #444; border-radius: 15px; }
+        .win-loss-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
+        .scanning { font-size: 10px; color: #888; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="loginScreen">
-    <div class="login-box">
-        <h2 style="color: var(--accent);">🔐 VIP AI SQL LOGIN</h2>
-        <input type="password" id="passInput" placeholder="Enter Password">
-        <button class="btn-get" onclick="checkLogin()">LOGIN NOW</button>
+<iframe id="game-frame" src="https://dkwin.org/#/saasLottery/WinGo?gameCode=WinGo_30S&lottery=WinGo"></iframe>
+
+<div id="smart-hud">
+    <div style="font-size: 11px; text-align: center; color: #888;">NAJMUL MASTER AI V10</div>
+    <div class="timer-box" id="time-left">00:30</div>
+    <div class="period-box">NEXT: <span id="next-period">SYNCING...</span></div>
+    <div class="stat-grid">
+        <div class="stat-item">MODE<b id="ai-mode">DB-AUTO</b></div>
+        <div class="stat-item">TREND<b id="current-trend">ANALYZING</b></div>
+        <div class="stat-item">STREAK<b id="streak-count">0</b></div>
+        <div class="stat-item">STATUS<b id="ai-status" style="color: #ffcc00;">WAITING</b></div>
     </div>
+    <div class="scanning" id="scan-text" style="margin-top: 10px; text-align: center;">V10 SYNC ACTIVE...</div>
 </div>
 
-<div id="mainApp">
-    <h2 style="color: var(--accent); margin-bottom: 15px;">🔥 NAJMUL MASTER AI V10</h2>
-    
-    <div class="ai-status-card">
-        <div class="stat-box"><label>Balance</label><span id="balView">10000</span></div>
-        <div class="stat-box"><label>AI Mode</label><span id="aiMode" style="color: #00FFCC;">8-CORE ACTIVE</span></div>
-        <div class="stat-box"><label>Win/Loss</label><span><b style="color:#2ecc71" id="winV">0</b> / <b style="color:#ff4d4d" id="lossV">0</b></span></div>
-        <div class="stat-box"><label>Risk Level</label><span id="riskLevel">LOW</span></div>
+<div id="pattern-alert">
+    <div style="color: #ffcc00; font-weight: bold; letter-spacing: 2px;">PATTERN MATCH FOUND</div>
+    <div id="target-period" style="font-size: 11px; color: #888; margin-top: 5px;">FOR: --</div>
+    <div class="result-box" id="suggested-size">--</div>
+    <div style="display: flex; justify-content: space-around; font-size: 18px;">
+        <div>NUM: <span id="suggested-num" style="color: #ffcc00;">--</span></div>
+        <div>COLOR: <span id="suggested-color" style="color: #ffcc00;">--</span></div>
     </div>
-
-    <input type="number" id="balInput" placeholder="ব্যালেন্স সেট করুন" onchange="initBalance()">
-
-    <div class="number-grid">
-        <button class="num-btn bg-blue" disabled>+Big</button>
-        <button class="num-btn n5" onclick="addNum(5)">5</button>
-        <button class="num-btn n6" onclick="addNum(6)">6</button>
-        <button class="num-btn n7" onclick="addNum(7)">7</button>
-        <button class="num-btn n8" onclick="addNum(8)">8</button>
-        <button class="num-btn n9" onclick="addNum(9)">9</button>
-        <button class="num-btn bg-orange" disabled>+Small</button>
-        <button class="num-btn n0" onclick="addNum(0)">0</button>
-        <button class="num-btn n1" onclick="addNum(1)">1</button>
-        <button class="num-btn n2" onclick="addNum(2)">2</button>
-        <button class="num-btn n3" onclick="addNum(3)">3</button>
-        <button class="num-btn n4" onclick="addNum(4)">4</button>
-    </div>
-
-    <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-        <span id="counter" style="color:var(--accent); font-weight:bold;">Input (0/4)</span>
-        <button onclick="deleteLast()" style="background:var(--delete-red); border:none; color:white; border-radius:5px; padding:5px 15px; cursor:pointer;">DELETE</button>
-    </div>
-    
-    <div id="patternDisplay">আগের 4টি রেজাল্ট ইনপুট দিন</div>
-
-    <input type="number" id="periodInput" placeholder="এখানে পিরিয়ড নম্বর লিখুন">
-
-    <div style="display: flex; flex-direction: column; gap: 15px; padding: 15px; margin-top: 10px;">
-        <button onclick="runAIModel()" style="width: 100%; padding: 18px; background: #00e5ff; color: #000; border: none; border-radius: 12px; font-weight: bold; font-size: 16px;">
-           🚀 GET PRO SIGNAL
-        </button>
-        <button onclick="openGame()" style="width: 100%; padding: 18px; background: #00FFCC; color: #000; border: none; border-radius: 12px; font-weight: bold; font-size: 16px;">
-           🚀 OPEN DK WIN & START AUTO-SCAN
-        </button>
-    </div>
-
-    <div id="searchLoader" style="display:none; margin:15px 0; color:var(--accent);">SQL ANALYZING...</div>
-
-    <div id="floatingOverlay">
-        <div style="color:var(--accent); font-weight:bold; margin-bottom:10px;">Dk 1 minute PRO AI SIGNAL</div>
-        <div id="winRateDisp" style="font-size:12px; color:#fff; margin-bottom:5px;">ACCURACY: --%</div>
-        <div id="floatPred" class="float-res">--</div>
-        <div id="floatNums" style="font-size:24px; color:#FFEB3B; letter-spacing:5px; margin-bottom:15px;">--</div>
-        <div class="ai-bet-info" id="aiBetInfo">BET AMOUNT: 200</div>
-        <div style="display:flex; gap:10px;">
-            <button onclick="record('WIN')" style="flex:1; background:#2ecc71; border:none; color:#fff; padding:10px; border-radius:5px; font-weight:bold;">WIN</button>
-            <button onclick="record('LOSS')" style="flex:1; background:#e74c3c; border:none; color:#fff; padding:10px; border-radius:5px; font-weight:bold;">LOSS</button>
-        </div>
-    </div>
-
-    <div class="history-section">
-        <table>
-            <thead><tr><th>Period</th><th>Signal</th><th>Result</th></tr></thead>
-            <tbody id="historyBody"></tbody>
-        </table>
-    </div>
+    <div id="feedback-status" class="win-loss-badge" style="background: #333;">V10 PREDICTION</div>
 </div>
 
 <script>
-    let wallet = 5000;
-    let wins = 0, losses = 0, mStep = 0, inputs = [];
-    let currentPrediction = "";
-    let currentNumbers = "";
-    let currentPatternKey = "";
-
+    let db;
     const DB_NAME = "NAJMUL_AI_SYSTEM";
     const STORE_NAME = "core_memory";
-    let db;
+    let historyData = []; 
+    let lastProcessedPeriod = "";
 
+    // Database Initialize
     const request = indexedDB.open(DB_NAME, 3);
     request.onupgradeneeded = (e) => {
         db = e.target.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-            db.createObjectStore(STORE_NAME, { keyPath: "pattern" });
-        }
+        if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: "pattern" });
     };
+
     request.onsuccess = (e) => { 
         db = e.target.result; 
         const tx = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
-        const DATA = [
-            { pattern: "BBB", next: "S" }, 
-            { pattern: "SSS", next: "B" },
-            { pattern: "BBSS", next: "B" },
-            { pattern: "SSBB", next: "S" },
-            { pattern: "BSBS", next: "B" },
-            { pattern: "SBSB", next: "S" },
-            
-    // --- ১. সিঙ্গেল প্যাটার্ন (Single/Zig-Zag - ১০০টি) ---
-    // লজিক: ১টি পর পর পরিবর্তন (B-S-B-S)
-    { pattern: "BSBS", next: "BIG", n: "7,9" }, { pattern: "SBSB", next: "SMALL", n: "0,2" },
-    { pattern: "BSBS", next: "SMALL", n: "1,4" }, { pattern: "SBSB", next: "BIG", n: "6,8" },
-    { pattern: "BSBS", next: "BIG", n: "5,7" }, { pattern: "SBSB", next: "SMALL", n: "3,1" },
-    { pattern: "BSBS", next: "SMALL", n: "0,4" }, { pattern: "SBSB", next: "BIG", n: "9,6" },
-
-    // --- ২. ডাবল প্যাটার্ন (Double - ১০০টি) ---
-    // লজিক: জোড়ায় জোড়ায় আসা (BB-SS)
-    { pattern: "BBSS", next: "BIG", n: "8,9" }, { pattern: "SSBB", next: "SMALL", n: "1,0" },
-    { pattern: "BBSB", next: "SMALL", n: "2,4" }, { pattern: "SSBS", next: "BIG", n: "7,5" },
-    { pattern: "BBSS", next: "SMALL", n: "3,0" }, { pattern: "SSBB", next: "BIG", n: "6,9" },
-    { pattern: "BSSB", next: "BIG", n: "7,8" }, { pattern: "SBBS", next: "SMALL", n: "1,2" },
-
-    // --- ৩. ত্রিপল প্যাটার্ন (Triple - ১০০টি) ---
-    // লজিক: ৩টি একই রকম এসে পরিবর্তন (BBB-S)
-    { pattern: "BBBS", next: "BIG", n: "9,6" }, { pattern: "SSSB", next: "SMALL", n: "1,4" },
-    { pattern: "BBBS", next: "SMALL", n: "3,0" }, { pattern: "SSSB", next: "BIG", n: "6,9" },
-    { pattern: "SBBB", next: "SMALL", n: "0,4" }, { pattern: "BSSS", next: "BIG", n: "5,7" },
-    { pattern: "SSSB", next: "BIG", n: "8,9" }, { pattern: "BBBS", next: "SMALL", n: "2,1" },
-
-    // --- ৪. চার প্যাটার্ন (Quad - ১০০টি) ---
-    // লজিক: ৪টি টানা একই রেজাল্ট (Dragon/Trend)
-    { pattern: "BBBB", next: "SMALL", n: "0,2" }, { pattern: "SSSS", next: "BIG", n: "9,7" },
-    { pattern: "BBBB", next: "BIG", n: "8,6" }, { pattern: "SSSS", next: "SMALL", n: "1,3" },
-    { pattern: "BBBB", next: "SMALL", n: "4,0" }, { pattern: "SSSS", next: "BIG", n: "5,9" },
-    { pattern: "BBBB", next: "BIG", n: "7,5" }, { pattern: "SSSS", next: "SMALL", n: "2,3" },
-
-    // --- ৫. পাঁচ প্যাটার্ন ও জটিল লজিক (৫ ও মিক্সড - ১০০টি) ---
-    // লজিক: ৫টি সিকোয়েন্সের লজিককে ৪-এ কনভার্ট করা (Complex SQL)
-    { pattern: "BSBB", next: "SMALL", n: "1,2" }, { pattern: "SBSS", next: "BIG", n: "8,9" },
-    { pattern: "BBSB", next: "BIG", n: "7,5" }, { pattern: "SSBS", next: "SMALL", n: "0,4" },
-    { pattern: "BSSB", next: "BIG", n: "6,7" }, { pattern: "SBBS", next: "SMALL", n: "3,1" },
-    { pattern: "BSBS", next: "BIG", n: "9,5" }, { pattern: "SBSB", next: "SMALL", n: "2,0" },
-            
-   //const MASTER_DB
-    // --- ক্যাটাগরি ১: পিওর সিঙ্গেল (Zig-Zag) ---
-    { pattern: "BSBS", next: "BIG", n: "7,9" }, { pattern: "SBSB", next: "SMALL", n: "0,2" },
-    { pattern: "BSSB", next: "BIG", n: "8,6" }, { pattern: "SBBS", next: "SMALL", n: "1,3" },
-    { pattern: "BBSB", next: "SMALL", n: "0,4" }, { pattern: "SSBS", next: "BIG", n: "5,9" },
-    { pattern: "BSBS", next: "SMALL", n: "2,4" }, { pattern: "SBSB", next: "BIG", n: "8,5" },
-
-    // --- ক্যাটাগরি ২: ডাবল অ্যান্ড মিরর (Double Logic) ---
-    { pattern: "BBSS", next: "BIG", n: "7,9" }, { pattern: "SSBB", next: "SMALL", n: "0,2" },
-    { pattern: "BBSB", next: "BIG", n: "8,6" }, { pattern: "SSBS", next: "SMALL", n: "1,4" },
-    { pattern: "BSBS", next: "BIG", n: "9,7" }, { pattern: "SBBS", next: "SMALL", n: "3,0" },
-    { pattern: "BSSB", next: "SMALL", n: "2,1" }, { pattern: "SBBS", next: "BIG", n: "6,9" },
-
-    // --- ক্যাটাগরি ৩: ড্রাগন ও ট্রেন্ড ব্রেকার (Dragon Trend) ---
-    { pattern: "BBBB", next: "SMALL", n: "0,1" }, { pattern: "SSSS", next: "BIG", n: "9,8" },
-    { pattern: "BBBB", next: "BIG", n: "7,5" }, { pattern: "SSSS", next: "SMALL", n: "2,3" },
-    { pattern: "BBBS", next: "SMALL", n: "4,0" }, { pattern: "SSSB", next: "BIG", n: "5,6" },
-    { pattern: "BSSS", next: "BIG", n: "9,7" }, { pattern: "SBBB", next: "SMALL", n: "1,2" },
-
-    // --- ক্যাটাগরি ৪: জটিল SQL এবং র্যান্ডম ট্র্যাপ (Mixed Trap) ---
-    { pattern: "BSBB", next: "SMALL", n: "1,2" }, { pattern: "SBSS", next: "BIG", n: "8,9" },
-    { pattern: "BSSB", next: "BIG", n: "7,5" }, { pattern: "SBBS", next: "SMALL", n: "0,4" },
-    { pattern: "BBSB", next: "SMALL", n: "4,1" }, { pattern: "SSBS", next: "BIG", n: "6,8" },
-    { pattern: "BSSS", next: "SMALL", n: "3,0" }, { pattern: "SBBB", next: "BIG", n: "9,5" },
-
-    // --- ক্যাটাগরি ৫: বিশেষ সংখ্যা লজিক (Numeric ID) ---
-    { pattern: "2848", next: "SMALL", n: "0,4" }, { pattern: "0468", next: "BIG", n: "5,9" },
-    { pattern: "1357", next: "BIG", n: "8,6" }, { pattern: "2468", next: "SMALL", n: "1,3" },
-    { pattern: "9012", next: "SMALL", n: "3,0" }, { pattern: "7890", next: "BIG", n: "5,7" },
-
-     // --- ৬. ছয় প্যাটার্ন (Dragon/High Trend - ১০০টি) ---
-// লজিক: টানা ৬টি একই রেজাল্ট আসার পর ট্রেন্ড পরিবর্তনের সম্ভাবনা
-{ pattern: "BBBBBB", next: "SMALL", n: "0,1" }, { pattern: "SSSSSS", next: "BIG", n: "9,8" },
-{ pattern: "BBBBBB", next: "BIG", n: "7,5" }, { pattern: "SSSSSS", next: "SMALL", n: "2,4" },
-{ pattern: "BBBBBS", next: "SMALL", n: "3,0" }, { pattern: "SSSSSB", next: "BIG", n: "6,7" },
-{ pattern: "BBBSSS", next: "BIG", n: "8,9" }, { pattern: "SSSBBB", next: "SMALL", n: "1,2" },
-
-// --- ৭. সাত প্যাটার্ন (Super Trend/Mirror - ১০০টি) ---
-// লজিক: লম্বা সিকোয়েন্সের পর গেমের সাইকোলজিক্যাল ট্র্যাপ ধরা
-{ pattern: "BBBBBBB", next: "SMALL", n: "0,2" }, { pattern: "SSSSSSS", next: "BIG", n: "9,7" },
-{ pattern: "BBBBSSS", next: "BIG", n: "8,5" }, { pattern: "SSSSBBB", next: "SMALL", n: "1,4" },
-{ pattern: "BSBSBSB", next: "SMALL", n: "3,0" }, { pattern: "SBSBSBS", next: "BIG", n: "6,9" },
-{ pattern: "BBSSBBS", next: "BIG", n: "7,8" }, { pattern: "SSBBSSB", next: "SMALL", n: "2,3" },
-
-// --- ৮. আট প্যাটার্ন (Extreme/SQL Logic - ১০০টি) ---
-// লজিক: গেমের ব্যাকএন্ড আইডির সাথে মিল রেখে অত্যন্ত জটিল প্যাটার্ন
-{ pattern: "BBBBBBBB", next: "BIG", n: "9,6" }, { pattern: "SSSSSSSS", next: "SMALL", n: "0,3" },
-{ pattern: "BBBBSSSS", next: "SMALL", n: "1,4" }, { pattern: "SSSSBBBB", next: "BIG", n: "8,5" },
-{ pattern: "BSSBSSBS", next: "BIG", n: "7,9" }, { pattern: "SBBSBBSB", next: "SMALL", n: "2,0" },
-{ pattern: "28483725", next: "SMALL", n: "0,4" }, { pattern: "04682780", next: "BIG", n: "5,7" }
- 
-    
+        const MASTER_DATA = [
+            { pattern: "BBB", next: "S", n: "1,2,4" }, { pattern: "SSS", next: "B", n: "6,8,9" },
+            { pattern: "BBSS", next: "BIG", n: "7,8" }, { pattern: "SSBB", next: "SMALL", n: "0,1" },
+            { pattern: "BSBS", next: "BIG", n: "5,9" }, { pattern: "SBSB", next: "SMALL", n: "2,3" }
         ];
-        DATA.forEach(d => {
-            const getReq = tx.get(d.pattern);
-            getReq.onsuccess = () => { if(!getReq.result) tx.put(d); };
-        });
+        MASTER_DATA.forEach(d => tx.put(d));
     };
 
-    function checkLogin() {
-        if(document.getElementById('passInput').value === "0099") {
-            document.getElementById('loginScreen').style.display = "none";
-            document.getElementById('mainApp').style.display = "block";
-        } else alert("Wrong Password!");
-    }
+    // ডাটা সিঙ্ক করার ফাংশন
+    function syncGameData() {
+        try {
+            const frame = document.getElementById('game-frame');
+            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+            
+            // শক্তিশালী সিলেকটর (Table rows)
+            const rows = frameDoc.querySelectorAll('tr') || frameDoc.querySelectorAll('.list-item'); 
+            
+            if (rows && rows.length > 0) {
+                let currentPeriod = rows[0].cells[0].innerText.replace(/\s/g, '').trim();
+                
+                if (currentPeriod && currentPeriod.length > 5) {
+                    let nextPeriod = (BigInt(currentPeriod) + 1n).toString();
+                    document.getElementById('next-period').innerText = nextPeriod;
+                    document.getElementById('ai-status').innerText = "CONNECTED";
+                    document.getElementById('ai-status').style.color = "#00ffcc";
 
-    function initBalance() {
-        let v = document.getElementById('balInput').value;
-        if(v) { wallet = parseFloat(v); mStep = 0; refreshUI(); }
-    }
-
-    function refreshUI() {
-        document.getElementById('balView').innerText = wallet.toFixed(0);
-        document.getElementById('winV').innerText = wins;
-        document.getElementById('lossV').innerText = losses;
-        document.getElementById('riskLevel').innerText = (losses > wins) ? "HIGH" : "LOW";
-        document.getElementById('riskLevel').style.color = (losses > wins) ? "#ff4d4d" : "#FFEB3B";
-    }
-
-    function addNum(n) {
-        if (inputs.length < 4) {
-            inputs.push({t: (n >= 5 ? 'B' : 'S'), n: n});
-            document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ');
-            document.getElementById('counter').innerText = `Input (${inputs.length}/4)`;
+                    if (currentPeriod !== lastProcessedPeriod) {
+                        lastProcessedPeriod = currentPeriod;
+                        let currentBatch = [];
+                        rows.forEach((row, index) => {
+                            if (index < 12) {
+                                let txt = row.innerText.toLowerCase();
+                                if(txt.includes('big')) currentBatch.push('B');
+                                else if(txt.includes('small')) currentBatch.push('S');
+                            }
+                        });
+                        historyData = currentBatch;
+                    }
+                }
+            }
+        } catch (e) {
+            document.getElementById('next-period').innerText = "CORS ERROR: USE KIWI";
+            document.getElementById('ai-status').innerText = "RESTRICTED";
+            document.getElementById('ai-status').style.color = "#ff4444";
         }
     }
 
-    function deleteLast() {
-        inputs.pop();
-        document.getElementById('patternDisplay').innerText = inputs.map(i => i.t + i.n).join(' , ') || "আগের 4টি রেজাল্ট ইনপুট দিন";
-        document.getElementById('counter').innerText = `Input (${inputs.length}/4)`;
-    }
-
+    // AI মডেল চালানো
     async function runAIModel() {
-        // পিরিয়ড নম্বর চেক
-        const periodVal = document.getElementById('periodInput').value;
-        if (!periodVal) return; // অটো স্ক্যান মোডে বিরক্ত না করার জন্য এলার্ট বন্ধ করা হয়েছে
+        if (historyData.length < 3) return;
 
-        if (inputs.length < 4) return; // ১০টি ইনপুট না থাকলে ফাংশন চলবে না
-
-        const loader = document.getElementById('searchLoader');
-        if(loader) loader.style.display = "block";
-
-        currentPatternKey = inputs.map(i => i.t).join('');
-        let prediction = ""; 
-        let modeHTML = "";
-        let confidence = 93;
-
-        // --- ব্রেন ১-৪: মেমোরি ও রেশিও লেয়ার ---
-        let head1 = currentPatternKey[0]; 
-        let head2 = currentPatternKey[1];
+        const nextPeriod = document.getElementById('next-period').innerText;
+        const tx = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME);
         
-        if (head1 === head2) {
-            prediction = head1;
-            modeHTML = `<span style="color: #00FFCC;">HEAD TREND</span>`;
-        } else {
-            let match = await new Promise((res) => {
-                const tx = db.transaction(STORE_NAME, "readonly");
-                const store = tx.objectStore(STORE_NAME);
-                const req = store.get(currentPatternKey);
-                req.onsuccess = () => res(req.result);
-                req.onerror = () => res(null);
-            });
-            if (match) {
-                prediction = match.next;
-                modeHTML = `<span style="color: #FFD700;">MEMORY MATCH</span>`;
-                confidence = 98;
-            } else {
-                let bCount = inputs.filter(i => i.t === 'B').length;
-                prediction = bCount >= 5 ? "B" : "S";
-                modeHTML = `<span style="color: #00FFCC;">AUTO-GEN</span>`;
-            }
-        }
-
-        // --- ব্রেন ৫-১০: জিক-জ্যাক, ড্রাগন ও ট্র্যাপ ডিটেকশন ---
-        let lastNine = currentPatternKey.slice(-9);
-        if (lastNine === "BBBBBBBBB" || lastNine === "SSSSSSSSS") {
-            prediction = lastNine[0];
-            modeHTML = `<span style="color: #00FFCC;">ULTRA DRAGON (9X)</span>`;
-            confidence = 100;
-        }
-
-        let lastFour = currentPatternKey.slice(-4);
-        if (lastFour === "BSBS" || lastFour === "SBSB") {
-            prediction = (lastFour[3] === "B") ? "S" : "B"; 
-            modeHTML = `<span style="color: #BB86FC;">ZIG-ZAG DETECTED</span>`;
-        }
-
-        if (lastFour === "BSSB" || lastFour === "SBBS") {
-            prediction = (lastFour[3] === "B") ? "B" : "S"; 
-            modeHTML = `<span style="color: #0080FF;">MIRROR REPEAT</span>`;
-        }
-
-        if (typeof losses !== 'undefined' && losses >= 2 && mStep >= 2) {
-            prediction = (prediction === "B") ? "S" : "B"; 
-            modeHTML = `<span style="color: #FF9800;">TRAP DETECTED</span>`;
-        }
-
-        // --- ব্রেন ১১: মেন্টর প্রোটেকশন (৬ লস হলে) ---
-        if (mStep >= 6) {
-            document.getElementById('floatNums').innerText = "WAIT 5 MIN";
-            document.getElementById('aiMode').innerHTML = `<span style="color: #FF1744; font-weight:bold;">MENTOR: STOP</span>`;
-            document.getElementById('floatPred').innerText = "REST";
-            document.getElementById('floatingOverlay').style.display = "block";
-            if(loader) loader.style.display = "none";
-            return; 
-        }
-
-        if(loader) loader.style.display = "none";
+        let found = null;
+        let patternToSearch = historyData.slice(0, 4).join('');
         
-        currentPrediction = (prediction === "B") ? "BIG" : "SMALL";
-        let pNums = (prediction === "B") ? [9,8,7,6,5] : [4,3,2,1,0];
-        currentNumbers = pNums.sort(() => Math.random() - 0.5).slice(0,3).join(',');
-
-        document.getElementById('aiMode').innerHTML = modeHTML;
-        document.getElementById('floatPred').innerText = currentPrediction;
-        document.getElementById('floatPred').style.color = (prediction === "B") ? "#00FFCC" : "#ff4d4d";
-        document.getElementById('floatNums').innerText = "(" + currentNumbers + ")";
-        document.getElementById('winRateDisp').innerText = "ACCURACY: " + (confidence + (new Date().getSeconds() % 3)) + "%";
-        
-        let betAmount = Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
-        document.getElementById('aiBetInfo').innerText = "BET AMOUNT: " + betAmount;
-        document.getElementById('floatingOverlay').style.display = "block";
+        const req = tx.get(patternToSearch);
+        req.onsuccess = () => {
+            found = req.result;
+            let prediction = found ? found.next : (historyData[0] === 'B' ? 'SMALL' : 'BIG');
+            let numSuggest = found ? found.n : (prediction === 'BIG' ? "5,7,9" : "0,2,4");
+            displaySignal(prediction, numSuggest, nextPeriod);
+        };
     }
 
-    function record(status) {
-        let currentBet = Math.floor((wallet * 2 / 100) * Math.pow(2, mStep));
-        let predT = (currentPrediction === "BIG") ? "B" : "S";
-        const tx = db.transaction(STORE_NAME, "readwrite");
-        const store = tx.objectStore(STORE_NAME);
-        
-        if(status === 'WIN') {
-            wallet += (currentBet * 0.9); wins++; mStep = 0;
-            store.put({ pattern: currentPatternKey, next: predT });
-        } else {
-            wallet -= currentBet; losses++; mStep++;
-            store.put({ pattern: currentPatternKey, next: (predT === "B" ? "S" : "B") });
-        }
-        
-        const row = `<tr><td>${document.getElementById('periodInput').value}</td><td style="color:${(currentPrediction==='BIG')?'#ff4d4d':'#00FFCC'}; font-weight:bold;">${currentPrediction} (${currentNumbers})</td><td style="color:${status==='WIN'?'#2ecc71':'#ff4d4d'}">${status}</td></tr>`;
-        document.getElementById('historyBody').innerHTML = row + document.getElementById('historyBody').innerHTML;
-        
-        document.getElementById('floatingOverlay').style.display = "none";
-        inputs = []; 
-        document.getElementById('patternDisplay').innerText = "আগের ১০টি রেজাল্ট ইনপুট দিন";
-        document.getElementById('counter').innerText = `Input (0/10)`;
-        refreshUI();
-        document.getElementById('periodInput').value = "";
+    function displaySignal(pred, nums, period) {
+        let isBig = pred.toUpperCase().includes('B');
+        document.getElementById('suggested-size').innerText = isBig ? 'BIG' : 'SMALL';
+        document.getElementById('suggested-size').style.color = isBig ? "#ffcc00" : "#00ffcc";
+        document.getElementById('suggested-num').innerText = nums;
+        document.getElementById('suggested-color').innerText = isBig ? "RED" : "GREEN";
+        document.getElementById('target-period').innerText = "FOR: " + period;
+
+        const alertBox = document.getElementById('pattern-alert');
+        alertBox.style.display = "block";
+        setTimeout(() => { alertBox.style.display = "none"; }, 12000); 
     }
 
-    function openGame() {
-        const gameUrl = "https://dkwin9.com/#/saasLottery";
-        window.open(gameUrl, "_blank");
-    }
-
-    window.addEventListener("message", (event) => {
-        if (event.data && event.data.type === 'AUTO_INPUT') {
-            let detectedSize = event.data.data;
-            let detectedPeriod = event.data.period;
-
-            // একই পিরিয়ডের ডাটা বারবার আসা বন্ধ করতে চেক
-            if (inputs.length > 0 && inputs[inputs.length - 1].p === detectedPeriod) {
-                return; 
-            }
-
-            if (inputs.length >= 10) inputs.shift();
+    function startTimer() {
+        setInterval(() => {
+            let now = new Date();
+            let sec = 30 - (now.getSeconds() % 30);
+            document.getElementById('time-left').innerText = `00:${sec < 10 ? '0' + sec : sec}`;
             
-            // ডাটা যোগ করার সময় পিরিয়ডও সেভ করা হচ্ছে
-            inputs.push({ t: detectedSize, n: '?', p: detectedPeriod });
+            syncGameData();
 
-            document.getElementById('counter').innerText = `Input (${inputs.length}/10)`;
-            document.getElementById('patternDisplay').innerText = inputs.map(i => i.t).join(' , ');
-            
-            // পিরিয়ড নম্বর অটো আপডেট
-            document.getElementById('periodInput').value = detectedPeriod + 1; 
+            if (sec === 15) runAIModel(); // ১৫ সেকেন্ড বাকি থাকতে প্রডিকশন দিবে
+        }, 1000);
+    }
 
-            if (inputs.length === 10) {
-                runAIModel();
-            }
-        }
-    }, false);
+    window.onload = startTimer;
 </script>
 </body>
-    </html>
-    
+</html>
+
