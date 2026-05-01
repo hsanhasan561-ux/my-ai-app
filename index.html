@@ -42,12 +42,12 @@
     <div class="timer-box" id="time-left">00:30</div>
     <div class="period-box">NEXT: <span id="next-period">SYNCING...</span></div>
     <div class="stat-grid">
-        <div class="stat-item">MODE<b id="ai-mode">DIRECT-API</b></div>
+        <div class="stat-item">MODE<b id="ai-mode">ULTRA-FAST</b></div>
         <div class="stat-item">TREND<b id="current-trend">STABLE</b></div>
         <div class="stat-item">STREAK<b id="streak-count">0</b></div>
-        <div class="stat-item">STATUS<b id="ai-status" style="color: #ffcc00;">WAITING</b></div>
+        <div class="stat-item">STATUS<b id="ai-status" style="color: #ffcc00;">CONNECTING</b></div>
     </div>
-    <div class="scanning" id="scan-text" style="margin-top: 10px; text-align: center;">PROXY SYNC ACTIVE...</div>
+    <div class="scanning" id="scan-text" style="margin-top: 10px; text-align: center;">V10 PROXY ACTIVE...</div>
 </div>
 
 <div id="pattern-alert">
@@ -81,20 +81,20 @@
         const MASTER_DATA = [
             { pattern: "BBB", next: "S", n: "1,2,4" }, { pattern: "SSS", next: "B", n: "6,8,9" },
             { pattern: "BBSS", next: "BIG", n: "7,8" }, { pattern: "SSBB", next: "SMALL", n: "0,1" },
-            { pattern: "BSBS", next: "BIG", n: "5,9" }, { pattern: "SBSB", next: "SMALL", n: "2,3" }
+            { pattern: "BSBS", next: "BIG", n: "5,9" }, { pattern: "SBSB", next: "SMALL", n: "2,3" },
+            { pattern: "BBBS", next: "SMALL", n: "0,3" }, { pattern: "SSSB", next: "BIG", n: "5,7" }
         ];
         MASTER_DATA.forEach(d => tx.put(d));
     };
 
-    // আপনার নতুন প্রক্সি ডাটা সিঙ্ক ফাংশন
+    // ফাস্ট ডাটা সিঙ্ক ফাংশন (Corsproxy.io ব্যবহার করা হয়েছে)
     async function syncGameData() {
         try {
-            const proxyUrl = 'https://api.allorigins.win/get?url=';
-            const targetUrl = encodeURIComponent('https://dkwin.org/api/web/game/history?gameCode=WinGo_30S');
+            const proxy = 'https://corsproxy.io/?';
+            const target = 'https://dkwin.org/api/web/game/history?gameCode=WinGo_30S';
             
-            const response = await fetch(proxyUrl + targetUrl);
-            const data = await response.json();
-            const gameData = JSON.parse(data.contents);
+            const response = await fetch(proxy + encodeURIComponent(target));
+            const gameData = await response.json();
 
             if (gameData && gameData.data && gameData.data.length > 0) {
                 let lastGame = gameData.data[0]; 
@@ -102,24 +102,22 @@
                 
                 let nextPeriod = (BigInt(currentPeriod) + 1n).toString();
                 document.getElementById('next-period').innerText = nextPeriod;
-                document.getElementById('ai-status').innerText = "CONNECTED (DIRECT)";
+                document.getElementById('ai-status').innerText = "CONNECTED";
                 document.getElementById('ai-status').style.color = "#00ffcc";
 
                 if (currentPeriod !== lastProcessedPeriod) {
                     lastProcessedPeriod = currentPeriod;
-                    // ডাটা ফরম্যাট করা
                     historyData = gameData.data.slice(0, 12).map(item => {
                         return parseInt(item.result) >= 5 ? 'B' : 'S';
                     });
                 }
             }
         } catch (e) {
-            document.getElementById('ai-status').innerText = "OFFLINE - RETRYING";
+            document.getElementById('ai-status').innerText = "RETRYING...";
             document.getElementById('ai-status').style.color = "#ffcc00";
         }
     }
 
-    // AI মডেল চালানো
     async function runAIModel() {
         if (historyData.length < 3) return;
 
@@ -157,8 +155,10 @@
             let sec = 30 - (now.getSeconds() % 30);
             document.getElementById('time-left').innerText = `00:${sec < 10 ? '0' + sec : sec}`;
             
+            // প্রতি সেকেন্ডে ডাটা সিঙ্ক করার চেষ্টা করবে
             syncGameData();
 
+            // ১৫ সেকেন্ডে প্রডিকশন শো করবে
             if (sec === 15) runAIModel(); 
         }, 1000);
     }
