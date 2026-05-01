@@ -38,16 +38,16 @@
 <iframe id="game-frame" src="https://dkwin.org/#/saasLottery/WinGo?gameCode=WinGo_30S&lottery=WinGo"></iframe>
 
 <div id="smart-hud">
-    <div style="font-size: 11px; text-align: center; color: #888;">NAJMUL MASTER AI V10</div>
+    <div style="font-size: 11px; text-align: center; color: #888;">NAJMUL MASTER AI V10 PRO</div>
     <div class="timer-box" id="time-left">00:30</div>
     <div class="period-box">NEXT: <span id="next-period">SYNCING...</span></div>
     <div class="stat-grid">
-        <div class="stat-item">MODE<b id="ai-mode">DB-AUTO</b></div>
-        <div class="stat-item">TREND<b id="current-trend">ANALYZING</b></div>
+        <div class="stat-item">MODE<b id="ai-mode">DIRECT-API</b></div>
+        <div class="stat-item">TREND<b id="current-trend">STABLE</b></div>
         <div class="stat-item">STREAK<b id="streak-count">0</b></div>
         <div class="stat-item">STATUS<b id="ai-status" style="color: #ffcc00;">WAITING</b></div>
     </div>
-    <div class="scanning" id="scan-text" style="margin-top: 10px; text-align: center;">V10 SYNC ACTIVE...</div>
+    <div class="scanning" id="scan-text" style="margin-top: 10px; text-align: center;">PROXY SYNC ACTIVE...</div>
 </div>
 
 <div id="pattern-alert">
@@ -86,42 +86,36 @@
         MASTER_DATA.forEach(d => tx.put(d));
     };
 
-    // ডাটা সিঙ্ক করার ফাংশন
-    function syncGameData() {
+    // আপনার নতুন প্রক্সি ডাটা সিঙ্ক ফাংশন
+    async function syncGameData() {
         try {
-            const frame = document.getElementById('game-frame');
-            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+            const proxyUrl = 'https://api.allorigins.win/get?url=';
+            const targetUrl = encodeURIComponent('https://dkwin.org/api/web/game/history?gameCode=WinGo_30S');
             
-            // শক্তিশালী সিলেকটর (Table rows)
-            const rows = frameDoc.querySelectorAll('tr') || frameDoc.querySelectorAll('.list-item'); 
-            
-            if (rows && rows.length > 0) {
-                let currentPeriod = rows[0].cells[0].innerText.replace(/\s/g, '').trim();
-                
-                if (currentPeriod && currentPeriod.length > 5) {
-                    let nextPeriod = (BigInt(currentPeriod) + 1n).toString();
-                    document.getElementById('next-period').innerText = nextPeriod;
-                    document.getElementById('ai-status').innerText = "CONNECTED";
-                    document.getElementById('ai-status').style.color = "#00ffcc";
+            const response = await fetch(proxyUrl + targetUrl);
+            const data = await response.json();
+            const gameData = JSON.parse(data.contents);
 
-                    if (currentPeriod !== lastProcessedPeriod) {
-                        lastProcessedPeriod = currentPeriod;
-                        let currentBatch = [];
-                        rows.forEach((row, index) => {
-                            if (index < 12) {
-                                let txt = row.innerText.toLowerCase();
-                                if(txt.includes('big')) currentBatch.push('B');
-                                else if(txt.includes('small')) currentBatch.push('S');
-                            }
-                        });
-                        historyData = currentBatch;
-                    }
+            if (gameData && gameData.data && gameData.data.length > 0) {
+                let lastGame = gameData.data[0]; 
+                let currentPeriod = lastGame.period;
+                
+                let nextPeriod = (BigInt(currentPeriod) + 1n).toString();
+                document.getElementById('next-period').innerText = nextPeriod;
+                document.getElementById('ai-status').innerText = "CONNECTED (DIRECT)";
+                document.getElementById('ai-status').style.color = "#00ffcc";
+
+                if (currentPeriod !== lastProcessedPeriod) {
+                    lastProcessedPeriod = currentPeriod;
+                    // ডাটা ফরম্যাট করা
+                    historyData = gameData.data.slice(0, 12).map(item => {
+                        return parseInt(item.result) >= 5 ? 'B' : 'S';
+                    });
                 }
             }
         } catch (e) {
-            document.getElementById('next-period').innerText = "CORS ERROR: USE KIWI";
-            document.getElementById('ai-status').innerText = "RESTRICTED";
-            document.getElementById('ai-status').style.color = "#ff4444";
+            document.getElementById('ai-status').innerText = "OFFLINE - RETRYING";
+            document.getElementById('ai-status').style.color = "#ffcc00";
         }
     }
 
@@ -165,7 +159,7 @@
             
             syncGameData();
 
-            if (sec === 15) runAIModel(); // ১৫ সেকেন্ড বাকি থাকতে প্রডিকশন দিবে
+            if (sec === 15) runAIModel(); 
         }, 1000);
     }
 
@@ -173,4 +167,3 @@
 </script>
 </body>
 </html>
-
