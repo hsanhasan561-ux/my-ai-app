@@ -3,41 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WinGo Master AI V10 - Ultra Pro</title>
+    <title>WinGo Pattern Intelligence Pro - Najmul V10</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #050505; font-family: 'Segoe UI', Roboto, sans-serif; }
-        iframe { width: 100%; height: 100%; border: none; filter: brightness(0.8); }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Arial', sans-serif; }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        /* HUD Design */
         #smart-hud {
-            position: fixed; top: 15px; right: 15px; width: 260px;
-            background: rgba(10, 10, 10, 0.95); color: #fff; padding: 18px; border-radius: 15px;
-            z-index: 9999; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
+            position: fixed; top: 10px; right: 10px; width: 240px;
+            background: rgba(0, 0, 0, 0.9); color: #fff; padding: 15px; border-radius: 20px;
+            z-index: 9999; border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
         }
 
-        .timer-box { font-size: 42px; font-weight: 800; color: #ffcc00; text-align: center; text-shadow: 0 0 15px rgba(255,204,0,0.4); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .stat-item { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 10px; text-align: center; border: 1px solid #222; }
-        .stat-item span { display: block; font-size: 10px; color: #888; text-transform: uppercase; }
-        .stat-item b { font-size: 14px; color: #00ffcc; }
+        .timer-box { font-size: 38px; font-weight: bold; color: #ffcc00; text-align: center; margin-bottom: 5px; }
+        .period-box { font-size: 12px; color: #00ffcc; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px; }
+        .stat-item { background: rgba(255,255,255,0.1); padding: 5px; border-radius: 8px; text-align: center; }
+        .stat-item b { display: block; color: #00ffcc; font-size: 13px; }
 
-        /* Modern Alert */
         #pattern-alert {
-            display: none; position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
-            width: 340px; background: #000; border: 2px solid #ffcc00; border-radius: 25px;
-            padding: 25px; text-align: center; z-index: 10000; color: #fff;
-            box-shadow: 0 0 60px rgba(255, 204, 0, 0.3);
-            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: none; position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%);
+            width: 320px; background: #111; border: 4px solid #ffcc00; border-radius: 35px;
+            padding: 20px; text-align: center; z-index: 10000; color: #fff;
+            box-shadow: 0 0 50px rgba(255, 204, 0, 0.5);
         }
 
-        @keyframes slideIn { from { transform: translate(-50%, -100%); opacity: 0; } to { transform: translate(-50%, -50%); opacity: 1; } }
-
-        .res-type { font-size: 65px; font-weight: 900; margin: 15px 0; letter-spacing: -2px; }
-        .accuracy-tag { background: #ffcc00; color: #000; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        
-        .pulse { animation: pulse-red 2s infinite; }
-        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 204, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); } }
+        .result-box { font-size: 60px; font-weight: 900; color: #ffcc00; margin: 10px 0; border: 1px dashed #444; border-radius: 15px; }
+        .win-loss-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
+        .scanning { font-size: 10px; color: #888; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -45,117 +38,164 @@
 <iframe id="game-frame" src="https://dkwin.org/#/saasLottery/WinGo?gameCode=WinGo_30S&lottery=WinGo"></iframe>
 
 <div id="smart-hud">
-    <div style="font-size: 12px; font-weight: bold; color: #ffcc00; text-align: center; letter-spacing: 1px;">NAJMUL MASTER AI V11</div>
+    <div style="font-size: 11px; text-align: center; color: #888;">NAJMUL MASTER AI V10</div>
     <div class="timer-box" id="time-left">00:30</div>
+    <div class="period-box">NEXT: <span id="next-period">LOADING...</span></div>
     <div class="stat-grid">
-        <div class="stat-item"><span>Mode</span><b id="ai-mode">NEURAL</b></div>
-        <div class="stat-item"><span>Trend</span><b id="current-trend">STABLE</b></div>
-        <div class="stat-item"><span>Win Rate</span><b id="win-rate">94%</b></div>
-        <div class="stat-item"><span>Status</span><b id="ai-status">ACTIVE</b></div>
+        <div class="stat-item">MODE<b id="ai-mode">ULTRA SCAN</b></div>
+        <div class="stat-item">TREND<b id="current-trend">STABLE</b></div>
+        <div class="stat-item">STREAK<b id="streak-count">0</b></div>
+        <div class="stat-item">STATUS<b id="ai-status" style="color: #ffcc00;">CONNECTED</b></div>
     </div>
+    <div class="scanning" id="scan-text" style="margin-top: 10px; text-align: center;">READING GAMING HISTORY...</div>
 </div>
 
-<div id="pattern-alert" class="pulse">
-    <span class="accuracy-tag" id="acc-val">98.2% ACCURACY</span>
-    <div style="margin-top: 10px; font-size: 14px; color: #aaa;">NEXT PERIOD PREDICTION</div>
-    <div class="res-type" id="predicted-size">SMALL</div>
-    <div style="display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 15px;">
-        <div style="text-align: left;"><span>NUMBERS:</span><br><b id="pred-num" style="color: #ffcc00;">0,1,2,4</b></div>
-        <div style="text-align: right;"><span>COLOR:</span><br><b id="pred-color" style="color: #00ffcc;">GREEN</b></div>
+<div id="pattern-alert">
+    <div style="color: #ffcc00; font-weight: bold; letter-spacing: 2px;">PATTERN MATCH FOUND</div>
+    <div id="target-period" style="font-size: 11px; color: #888; margin-top: 5px;">FOR: --</div>
+    <div class="result-box" id="suggested-size">--</div>
+    <div style="display: flex; justify-content: space-around; font-size: 18px;">
+        <div>NUM: <span id="suggested-num" style="color: #ffcc00;">--</span></div>
+        <div>COLOR: <span id="suggested-color" style="color: #ffcc00;">--</span></div>
     </div>
+    <div id="feedback-status" class="win-loss-badge" style="background: #333;">V10 PREDICTION</div>
 </div>
 
 <script>
-    let historyData = [];
-    let lastOutcome = null;
-    let mStep = 0; // Martingale / Loss Tracker
-    let wins = 0, totals = 0;
+    let db;
+    const DB_NAME = "NAJMUL_AI_SYSTEM";
+    const STORE_NAME = "core_memory";
+    let historyData = []; 
+    let lastProcessedPeriod = "";
 
-    function getGameData() {
+    const request = indexedDB.open(DB_NAME, 3);
+    request.onupgradeneeded = (e) => {
+        db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: "pattern" });
+    };
+
+    request.onsuccess = (e) => { 
+        db = e.target.result; 
+        const tx = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
+        const MASTER_DATA = [
+            { pattern: "BBB", next: "S" }, { pattern: "SSS", next: "B" },
+            { pattern: "BBSS", next: "BIG", n: "8,9" }, { pattern: "SSBB", next: "SMALL", n: "1,0" },
+            { pattern: "BSBS", next: "BIG", n: "7,9" }, { pattern: "SBSB", next: "SMALL", n: "0,2" },
+            { pattern: "BBBB", next: "SMALL", n: "0,2" }, { pattern: "SSSS", next: "BIG", n: "9,7" },
+            { pattern: "BBSB", next: "SMALL", n: "2,4" }, { pattern: "SSBS", next: "BIG", n: "7,5" },
+            { pattern: "BBBS", next: "BIG", n: "9,6" }, { pattern: "SSSB", next: "SMALL", n: "1,4" },
+            { pattern: "BBBBBB", next: "SMALL", n: "0,1" }, { pattern: "SSSSSS", next: "BIG", n: "9,8" },
+            { pattern: "BBBBBBBB", next: "BIG", n: "9,6" }, { pattern: "SSSSSSSS", next: "SMALL", n: "0,3" }
+        ];
+        MASTER_DATA.forEach(d => tx.put(d));
+    };
+
+    // আপনার নতুন যুক্ত করা syncGameData ফাংশন
+    function syncGameData() {
         try {
-            const frame = document.getElementById('game-frame').contentWindow.document;
-            const rows = frame.querySelectorAll('.v-data-table__wrapper tbody tr');
-            if (rows.length > 0) {
-                let tempHistory = [];
-                rows.forEach((row, i) => { if(i < 15) tempHistory.push(row.innerText.includes('Big') ? 'B' : 'S'); });
-                historyData = tempHistory.reverse(); // Old to New
+            const frame = document.getElementById('game-frame');
+            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+            
+            const rows = frameDoc.querySelectorAll('tr') || frameDoc.querySelectorAll('.list-item'); 
+            
+            if (rows && rows.length > 0) {
+                let periodElement = rows[0].querySelector('td') || rows[0].children[0];
+                let currentPeriod = periodElement.innerText.replace(/\s/g, '').trim();
+                
+                if (currentPeriod && currentPeriod.length > 5) {
+                    let nextPeriod = (BigInt(currentPeriod) + 1n).toString();
+                    document.getElementById('next-period').innerText = nextPeriod;
+                    document.getElementById('ai-status').innerText = "CONNECTED";
+                    document.getElementById('ai-status').style.color = "#00ffcc";
+
+                    if (currentPeriod !== lastProcessedPeriod) {
+                        lastProcessedPeriod = currentPeriod;
+                        updateHistoryData(rows);
+                    }
+                }
+            } else {
+                 document.getElementById('next-period').innerText = "WAITING FOR DATA...";
             }
         } catch (e) {
-            // Fallback: Random history if iframe is blocked
-            if(historyData.length < 20) historyData.push(Math.random() > 0.5 ? 'B' : 'S');
-            if(historyData.length > 20) historyData.shift();
+            console.warn("CORS Blocked: Cannot read iframe data directly.");
+            document.getElementById('next-period').innerText = "CORS ERROR: USE EXTENSION";
+            document.getElementById('ai-status').innerText = "RESTRICTED";
+            document.getElementById('ai-status').style.color = "#ff4444";
         }
     }
 
-    async function analyzeNext() {
-        getGameData();
-        if (historyData.length < 5) return;
-
-        let lastFour = historyData.slice(-4).join('');
-        let prediction = "";
-        let trend = "STABLE";
-        let mode = "NEURAL";
-
-        // --- BRAIN ENGINE V11 ---
-        
-        // 1. Dragon Detection (পরপর ৪টা একই আসলে ৫ম টাও একই হওয়ার সম্ভাবনা বেশি)
-        if (lastFour === "BBBB") { prediction = "B"; trend = "DRAGON"; }
-        else if (lastFour === "SSSS") { prediction = "S"; trend = "DRAGON"; }
-        
-        // 2. Stair/Zig-Zag Detection
-        else if (lastFour === "BSBS" || lastFour === "SBSB") {
-            prediction = lastFour[3] === "B" ? "S" : "B";
-            trend = "ZIG-ZAG";
-        }
-        
-        // 3. Mirror Pattern (BBSS -> B)
-        else if (lastFour === "BBSS") { prediction = "B"; trend = "MIRROR"; }
-        
-        // 4. Adaptive Reverse Logic (লস হলে লজিক পাল্টানো)
-        if (mStep >= 3) {
-            prediction = (prediction === "B") ? "S" : "B";
-            mode = "REVERSE-AI";
-        } else {
-            prediction = prediction || (Math.random() > 0.5 ? "B" : "S");
-        }
-
-        displayAlert(prediction, trend, mode);
+    // আপনার নতুন যুক্ত করা updateHistoryData ফাংশন
+    function updateHistoryData(rows) {
+        let currentBatch = [];
+        rows.forEach((row, index) => {
+            if (index < 15) {
+                let rowText = row.innerText.toLowerCase();
+                if (rowText.includes('big')) currentBatch.push('B');
+                else if (rowText.includes('small')) currentBatch.push('S');
+            }
+        });
+        if (currentBatch.length > 0) historyData = currentBatch;
     }
 
-    function displayAlert(p, t, m) {
-        const size = (p === "B") ? "BIG" : "SMALL";
-        const color = (p === "B") ? "RED" : "GREEN";
-        const nums = (p === "B") ? "5,6,8,9" : "0,1,3,4";
-        
-        document.getElementById('predicted-size').innerText = size;
-        document.getElementById('predicted-size').style.color = (p === "B") ? "#ff4d4d" : "#00ffcc";
-        document.getElementById('pred-num').innerText = nums;
-        document.getElementById('pred-color').innerText = color;
-        document.getElementById('current-trend').innerText = t;
-        document.getElementById('ai-mode').innerText = m;
-        document.getElementById('acc-val').innerText = (92 + Math.random() * 6).toFixed(1) + "% ACCURACY";
+    async function runAIModel() {
+        syncGameData();
+        if (historyData.length < 3) return;
 
-        const alert = document.getElementById('pattern-alert');
-        alert.style.display = "block";
-        setTimeout(() => { alert.style.display = "none"; }, 5000); // ৫ সেকেন্ড থাকবে
+        const nextPeriod = document.getElementById('next-period').innerText;
+        const tx = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME);
+        
+        const checkLengths = [8, 7, 6, 4, 3];
+        let found = null;
+
+        for (let len of checkLengths) {
+            let patternToSearch = historyData.slice(0, len).join('');
+            found = await new Promise(resolve => {
+                const req = tx.get(patternToSearch);
+                req.onsuccess = () => resolve(req.result);
+            });
+            if (found) break; 
+        }
+
+        let prediction = found ? found.next : (historyData[0] === 'B' ? 'SMALL' : 'BIG');
+        let numSuggest = found ? found.n : (prediction === 'BIG' ? "5,7,9" : "0,2,4");
+        let modeName = found ? `DB-MATCH (${found.pattern.length}D)` : "SMART LOGIC";
+
+        displaySignal(prediction, numSuggest, modeName, nextPeriod);
     }
 
-    // Timer logic
-    setInterval(() => {
-        let now = new Date();
-        let sec = 30 - (now.getSeconds() % 30);
-        document.getElementById('time-left').innerText = `00:${sec < 10 ? '0'+sec : sec}`;
+    function displaySignal(pred, nums, mode, period) {
+        let isBig = pred.toUpperCase().includes('B');
+        let displaySize = isBig ? 'BIG' : 'SMALL';
         
-        if (sec === 18) analyzeNext(); // ১৮ সেকেন্ড থাকতে সিগন্যাল আসবে
-        
-        if (sec === 1) {
-            // রেজাল্ট ট্র্যাকিং
-            totals++;
-            // এখানে আপনি ম্যানুয়ালি লস ডিটেক্ট করলে mStep বাড়াতে পারেন
-            document.getElementById('win-rate').innerText = (90 + (wins/totals)).toFixed(0) + "%";
-        }
-    }, 1000);
+        document.getElementById('suggested-size').innerText = displaySize;
+        document.getElementById('suggested-size').style.color = isBig ? "#ffcc00" : "#00ffcc";
+        document.getElementById('suggested-num').innerText = nums;
+        document.getElementById('suggested-color').innerText = isBig ? "RED" : "GREEN";
+        document.getElementById('ai-mode').innerText = mode;
+        document.getElementById('target-period').innerText = "FOR: " + period;
 
+        const alertBox = document.getElementById('pattern-alert');
+        alertBox.style.display = "block";
+        setTimeout(() => { alertBox.style.display = "none"; }, 10000); 
+    }
+
+    function startTimer() {
+        setInterval(() => {
+            let now = new Date();
+            let sec = 30 - (now.getSeconds() % 30);
+            document.getElementById('time-left').innerText = `00:${sec < 10 ? '0' + sec : sec}`;
+            
+            syncGameData();
+
+            if (sec === 18) runAIModel();
+            
+            if (sec === 1) {
+                document.getElementById('ai-status').style.color = "#00ffcc";
+            }
+        }, 1000);
+    }
+
+    window.onload = startTimer;
 </script>
 </body>
 </html>
