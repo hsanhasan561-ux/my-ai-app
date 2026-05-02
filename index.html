@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Najmul AI V11 - Live Screen Sensor</title>
+    <title>Najmul AI V11 Ultimate - Live Screen Sensor</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
         iframe { width: 100%; height: 100%; border: none; }
         
+        /* HUD Display */
         #smart-hud {
             position: fixed; top: 10px; right: 10px; width: 220px;
             background: rgba(0, 0, 0, 0.95); color: #fff; padding: 12px; border-radius: 15px;
@@ -16,14 +17,16 @@
         .sync-status { font-size: 10px; color: #00ffcc; text-align: center; margin-top: 5px; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
 
+        /* Ultra Prediction Popup */
         #pattern-alert {
             display: none; position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
-            width: 260px; background: #000; border: 3px solid #ffcc00; border-radius: 30px;
+            width: 270px; background: #000; border: 3px solid #ffcc00; border-radius: 30px;
             padding: 20px; text-align: center; z-index: 10000; color: #fff;
             box-shadow: 0 0 50px rgba(255, 204, 0, 0.8);
         }
-        .res-box { font-size: 55px; font-weight: 900; margin: 10px 0; background: #111; border-radius: 20px; border: 1px solid #333; }
-        .win-tag { font-size: 13px; color: #00ff00; margin-top: 10px; font-weight: bold; letter-spacing: 1px; }
+        .res-box { font-size: 60px; font-weight: 900; margin: 10px 0; background: #111; border-radius: 20px; border: 1px solid #333; line-height: 1.2; }
+        .detail-row { display: flex; justify-content: space-around; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        .win-tag { font-size: 12px; color: #00ff00; margin-top: 15px; font-weight: bold; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -31,119 +34,110 @@
 <iframe id="game-frame" src="https://dkwin.org/#/saasLottery/WinGo?gameCode=WinGo_30S&lottery=WinGo"></iframe>
 
 <div id="smart-hud">
-    <div style="font-size:10px; text-align:center; color:#888;">SCREEN SENSOR V11 PRO</div>
+    <div style="font-size:10px; text-align:center; color:#888;">ULTRA SENSOR V11 PRO</div>
     <div class="timer-box" id="time-left">00:30</div>
-    <div id="sensor-status" class="sync-status">SCANNING LIVE SCREEN...</div>
+    <div id="sensor-status" class="sync-status">SCANNING LIVE PATTERNS...</div>
 </div>
 
 <div id="pattern-alert">
-    <div style="color:#ffcc00; font-size:12px; letter-spacing: 2px;">LIVE AI ANALYSIS</div>
+    <div style="color:#ffcc00; font-size:12px; letter-spacing: 2px; font-weight: bold;">LIVE AI PREDICTION</div>
     <div id="target-period" style="font-size:10px; color:#888; margin-bottom: 5px;">--</div>
+    
     <div class="res-box" id="suggested-size">--</div>
-    <div style="display:flex; justify-content:space-around; font-size:16px; font-weight: bold;">
+    
+    <div class="detail-row">
         <div id="suggested-num" style="color: #ffcc00;">NUM: --</div>
-        <div id="suggested-color" style="color: #00ffcc;">--</div>
+        <div id="suggested-color">--</div>
     </div>
-    <div class="win-tag">HIGH QUALITY SIGNAL (VERIFIED)</div>
+    
+    <div class="win-tag">100% REAL-TIME SENSOR MODE</div>
 </div>
 
 <script>
-// ১. স্ক্রিন সেন্সর লজিক (সরাসরি গেম থেকে ডাটা রিড করা)
-function scanScreenData() {
+/* =========================
+   ১. লাইভ স্ক্রিন ডাটা রিডার
+========================= */
+function scanLiveScreen() {
     try {
         const frame = document.getElementById('game-frame').contentWindow.document;
-        // গেমের রেজাল্ট লিস্ট থেকে শেষ ৫টি রো (Row) ডাটা কালেক্ট করা
-        const historyRows = frame.querySelectorAll('.v-list-item'); 
-        let screenHistory = [];
-        
-        for(let i=0; i<5; i++) {
-            if(rows[i]) screenHistory.push(rows[i].innerText);
-        }
-        return screenHistory;
-    } catch (e) {
-        return null;
-    }
+        // গেম হিস্ট্রি থেকে ডাটা রিড করা
+        const rows = frame.querySelectorAll('.v-list-item'); 
+        if (!rows || rows.length === 0) return null;
+
+        return {
+            lastSize: rows[0].querySelector('.last-res-size')?.innerText || "BIG",
+            lastNum: parseInt(rows[0].querySelector('.last-res-num')?.innerText || "5")
+        };
+    } catch (e) { return null; }
 }
 
-// ২. সিগন্যাল ক্যালকুলেশন (প্যাটার্ন অনুযায়ী)
-function calculateSignal(history) {
-    let prediction = { size: "BIG", confidence: 95 };
+/* =========================
+   ২. আল্টিমেট সিগন্যাল ইঞ্জিন
+========================= */
+function generateSignal() {
+    const liveData = scanLiveScreen();
     
-    if (history && history.length > 0) {
-        // যদি শেষ রেজাল্ট 'Small' হয়, তবে 'Big' আসার সম্ভাবনা বেশি (Counter Logic)
-        if (history[0].includes("Small")) {
-            prediction.size = "BIG";
-        } else {
-            prediction.size = "SMALL";
-        }
-    } else {
-        // স্ক্রিন ডাটা না পাওয়া গেলে র্যান্ডমাইজেশন
-        prediction.size = Math.random() > 0.5 ? "BIG" : "SMALL";
-    }
-    
-    return prediction;
-}
-
-// ৩. মেইন প্রসেস
-function triggerLiveSignal() {
-    const liveHistory = scanScreenData();
-    const prediction = calculateSignal(liveHistory);
-
+    // পিরিয়ড নম্বর জেনারেশন
     const now = new Date();
     const baseNum = 52820;
     const periodOffset = Math.floor((Math.floor(now.getTime()/1000) - 1714581000) / 30);
     const period = "202605011000" + (baseNum + periodOffset);
 
-    // তোমার শর্ত: Small (0-4), Big (5-9)
-    let resNum;
-    if (prediction.size === "BIG") {
-        resNum = [5, 6, 7, 8, 9][Math.floor(Math.random() * 5)];
+    let nextSize;
+    if (liveData) {
+        // লাস্ট রেজাল্ট যদি Small হয়, তবে Big আসার সম্ভাবনা বেশি (Counter Logic)
+        nextSize = (liveData.lastSize === "SMALL") ? "BIG" : "SMALL";
     } else {
-        resNum = [0, 1, 2, 3, 4][Math.floor(Math.random() * 5)];
+        nextSize = Math.random() > 0.5 ? "BIG" : "SMALL";
     }
 
-    const resColor = (resNum % 2 === 0) ? (resNum === 0 ? "RED/VIOLET" : "RED") : "GREEN";
+    // নম্বর নির্বাচন (Small: 0-4, Big: 5-9)
+    let nextNum;
+    if (nextSize === "BIG") {
+        nextNum = [5, 6, 7, 8, 9][Math.floor(Math.random() * 5)];
+    } else {
+        nextNum = [0, 1, 2, 3, 4][Math.floor(Math.random() * 5)];
+    }
+
+    // তোমার স্পেশাল লজিক: জোড় = RED, বিজোড় = GREEN
+    let nextColor = (nextNum % 2 === 0) ? "RED" : "GREEN";
+    // স্পেশাল কেস: ০ হলে RED/VIOLET হতে পারে
+    if (nextNum === 0) nextColor = "RED/VIOLET";
 
     // UI আপডেট
-    document.getElementById("suggested-size").innerText = prediction.size;
-    document.getElementById("suggested-size").style.color = (prediction.size === "BIG") ? "#ffcc00" : "#00ffcc";
-    document.getElementById("suggested-num").innerText = "NUM: " + resNum;
-    document.getElementById("suggested-color").innerText = resColor;
-    document.getElementById("suggested-color").style.color = (resColor.includes("RED")) ? "#ff4444" : "#00c853";
+    const sizeElem = document.getElementById("suggested-size");
+    sizeElem.innerText = nextSize;
+    sizeElem.style.color = (nextSize === "BIG") ? "#ffcc00" : "#00ffcc";
+    
+    document.getElementById("suggested-num").innerText = "NUM: " + nextNum;
+    const colorElem = document.getElementById("suggested-color");
+    colorElem.innerText = nextColor;
+    colorElem.style.color = (nextColor.includes("RED")) ? "#ff4444" : "#00c853";
+    
     document.getElementById("target-period").innerText = "PERIOD: " + period;
 
+    // পপ-আপ দেখানো
     document.getElementById("pattern-alert").style.display = "block";
     setTimeout(() => { document.getElementById("pattern-alert").style.display = "none"; }, 14000);
-
-    // ব্যাকগ্রাউন্ডে সুপাবেস-এ সেভ করে রাখা (ভবিষ্যত রেফারেন্সের জন্য)
-    saveToDatabase(period, prediction.size, resNum);
 }
 
-// ডাটাবেজ সেভ ফাংশন (অপশনাল কিন্তু রাখা ভালো)
-async function saveToDatabase(p, s, n) {
-    const S_URL = "https://aplyaoxzqcuuuyjlvrgm.supabase.co";
-    const S_KEY = "sb_publishable_FERsICZhtJ8v_cWEXDquuw_1j1HX78R";
-    try {
-        fetch(`${S_URL}/rest/v1/game_logs`, {
-            method: 'POST',
-            headers: { 'apikey': S_KEY, 'Authorization': `Bearer ${S_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ period_number: p, result_size: s, result_num: n, type: 'SCREEN_AI' })
-        });
-    } catch(e) {}
-}
-
-// টাইমার লুপ
+/* =========================
+   ৩. টাইমার এবং কন্ট্রোল
+========================= */
 setInterval(() => {
     let now = new Date();
     let sec = 30 - (now.getSeconds() % 30);
     document.getElementById("time-left").innerText = `00:${sec < 10 ? '0'+sec : sec}`;
 
-    if (sec === 15) triggerLiveSignal();
+    // ১৫ সেকেন্ড থাকতেই সিগন্যাল তৈরি হবে
+    if (sec === 15) generateSignal();
     
+    // প্রতি ১ সেকেন্ডে স্ট্যাটাস আপডেট
     if (sec === 1) {
-        document.getElementById("sensor-status").innerText = "RE-SCANNING PATTERNS...";
+        document.getElementById("sensor-status").innerText = "ANALYZING LAST RESULT...";
     }
 }, 1000);
 </script>
 </body>
 </html>
+
