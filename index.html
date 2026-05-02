@@ -2,31 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Najmul AI V11 Ultimate - Live Screen Sensor</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
-        iframe { width: 100%; height: 100%; border: none; }
+        /* মোবাইল স্ক্রিন ফিটিং সেটিংস */
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            height: 100%; 
+            width: 100%;
+            overflow: hidden; 
+            background: #000; 
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
         
-        /* HUD Display */
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none;
+            flex-grow: 1;
+        }
+        
+        /* HUD Display - মোবাইলের জন্য সাইজ অ্যাডজাস্ট */
         #smart-hud {
-            position: fixed; top: 10px; right: 10px; width: 220px;
-            background: rgba(0, 0, 0, 0.95); color: #fff; padding: 12px; border-radius: 15px;
+            position: fixed; top: 10px; right: 10px; width: 180px;
+            background: rgba(0, 0, 0, 0.95); color: #fff; padding: 10px; border-radius: 15px;
             z-index: 9999; border: 1px solid #ffcc00; box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
         }
-        .timer-box { font-size: 32px; font-weight: 900; color: #ffcc00; text-align: center; }
-        .sync-status { font-size: 10px; color: #00ffcc; text-align: center; margin-top: 5px; animation: blink 1s infinite; }
+        .timer-box { font-size: 28px; font-weight: 900; color: #ffcc00; text-align: center; }
+        .sync-status { font-size: 9px; color: #00ffcc; text-align: center; margin-top: 5px; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
 
-        /* Ultra Prediction Popup */
+        /* Ultra Prediction Popup - মোবাইল স্ক্রিন অনুযায়ী অটো পজিশন */
         #pattern-alert {
-            display: none; position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
-            width: 270px; background: #000; border: 3px solid #ffcc00; border-radius: 30px;
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; max-width: 280px; background: #000; border: 3px solid #ffcc00; border-radius: 30px;
             padding: 20px; text-align: center; z-index: 10000; color: #fff;
             box-shadow: 0 0 50px rgba(255, 204, 0, 0.8);
         }
-        .res-box { font-size: 60px; font-weight: 900; margin: 10px 0; background: #111; border-radius: 20px; border: 1px solid #333; line-height: 1.2; }
+        .res-box { font-size: 55px; font-weight: 900; margin: 10px 0; background: #111; border-radius: 20px; border: 1px solid #333; line-height: 1.2; }
         .detail-row { display: flex; justify-content: space-around; font-size: 18px; font-weight: bold; margin-top: 10px; }
-        .win-tag { font-size: 12px; color: #00ff00; margin-top: 15px; font-weight: bold; letter-spacing: 1px; }
+        .win-tag { font-size: 11px; color: #00ff00; margin-top: 15px; font-weight: bold; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -34,7 +52,7 @@
 <iframe id="game-frame" src="https://dkwin.org/#/saasLottery/WinGo?gameCode=WinGo_30S&lottery=WinGo"></iframe>
 
 <div id="smart-hud">
-    <div style="font-size:10px; text-align:center; color:#888;">ULTRA SENSOR V11 PRO</div>
+    <div style="font-size:9px; text-align:center; color:#888;">ULTRA SENSOR V11 PRO</div>
     <div class="timer-box" id="time-left">00:30</div>
     <div id="sensor-status" class="sync-status">SCANNING LIVE PATTERNS...</div>
 </div>
@@ -54,13 +72,10 @@
 </div>
 
 <script>
-/* =========================
-   ১. লাইভ স্ক্রিন ডাটা রিডার
-========================= */
+/* লজিক আগের মতোই রাখা হয়েছে (কোনো পরিবর্তন নেই) */
 function scanLiveScreen() {
     try {
         const frame = document.getElementById('game-frame').contentWindow.document;
-        // গেম হিস্ট্রি থেকে ডাটা রিড করা
         const rows = frame.querySelectorAll('.v-list-item'); 
         if (!rows || rows.length === 0) return null;
 
@@ -71,13 +86,8 @@ function scanLiveScreen() {
     } catch (e) { return null; }
 }
 
-/* =========================
-   ২. আল্টিমেট সিগন্যাল ইঞ্জিন
-========================= */
 function generateSignal() {
     const liveData = scanLiveScreen();
-    
-    // পিরিয়ড নম্বর জেনারেশন
     const now = new Date();
     const baseNum = 52820;
     const periodOffset = Math.floor((Math.floor(now.getTime()/1000) - 1714581000) / 30);
@@ -85,13 +95,11 @@ function generateSignal() {
 
     let nextSize;
     if (liveData) {
-        // লাস্ট রেজাল্ট যদি Small হয়, তবে Big আসার সম্ভাবনা বেশি (Counter Logic)
         nextSize = (liveData.lastSize === "SMALL") ? "BIG" : "SMALL";
     } else {
         nextSize = Math.random() > 0.5 ? "BIG" : "SMALL";
     }
 
-    // নম্বর নির্বাচন (Small: 0-4, Big: 5-9)
     let nextNum;
     if (nextSize === "BIG") {
         nextNum = [5, 6, 7, 8, 9][Math.floor(Math.random() * 5)];
@@ -99,12 +107,9 @@ function generateSignal() {
         nextNum = [0, 1, 2, 3, 4][Math.floor(Math.random() * 5)];
     }
 
-    // তোমার স্পেশাল লজিক: জোড় = RED, বিজোড় = GREEN
     let nextColor = (nextNum % 2 === 0) ? "RED" : "GREEN";
-    // স্পেশাল কেস: ০ হলে RED/VIOLET হতে পারে
     if (nextNum === 0) nextColor = "RED/VIOLET";
 
-    // UI আপডেট
     const sizeElem = document.getElementById("suggested-size");
     sizeElem.innerText = nextSize;
     sizeElem.style.color = (nextSize === "BIG") ? "#ffcc00" : "#00ffcc";
@@ -116,23 +121,15 @@ function generateSignal() {
     
     document.getElementById("target-period").innerText = "PERIOD: " + period;
 
-    // পপ-আপ দেখানো
     document.getElementById("pattern-alert").style.display = "block";
     setTimeout(() => { document.getElementById("pattern-alert").style.display = "none"; }, 14000);
 }
 
-/* =========================
-   ৩. টাইমার এবং কন্ট্রোল
-========================= */
 setInterval(() => {
     let now = new Date();
     let sec = 30 - (now.getSeconds() % 30);
     document.getElementById("time-left").innerText = `00:${sec < 10 ? '0'+sec : sec}`;
-
-    // ১৫ সেকেন্ড থাকতেই সিগন্যাল তৈরি হবে
     if (sec === 15) generateSignal();
-    
-    // প্রতি ১ সেকেন্ডে স্ট্যাটাস আপডেট
     if (sec === 1) {
         document.getElementById("sensor-status").innerText = "ANALYZING LAST RESULT...";
     }
@@ -140,4 +137,3 @@ setInterval(() => {
 </script>
 </body>
 </html>
-
