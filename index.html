@@ -2,137 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WinGo Pattern Intelligence Pro - Najmul V10</title>
+    <title>Najmul V10 Ultra Pro</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Arial', sans-serif; }
-        iframe { width: 100%; height: 100%; border: none; }
-        #smart-hud {
-            position: fixed; top: 10px; right: 10px; width: 240px;
-            background: rgba(0, 0, 0, 0.95); color: #fff; padding: 15px; border-radius: 20px;
-            z-index: 9999; border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+        body { margin: 0; background: #000; font-family: sans-serif; }
+        iframe { width: 100%; height: 100vh; border: none; }
+
+        /* পপ-আপ ডিজাইন */
+        #live-analysis-popup {
+            position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            width: 240px; background: rgba(0,0,0,0.95); border: 2px solid #ffcc00;
+            border-radius: 25px; padding: 20px; text-align: center; color: #fff;
+            z-index: 10000; display: none; box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
         }
-        .timer-box { font-size: 38px; font-weight: bold; color: #ffcc00; text-align: center; margin-bottom: 5px; }
-        .period-box { font-size: 12px; color: #00ffcc; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px; }
-        .stat-item { background: rgba(255,255,255,0.1); padding: 5px; border-radius: 8px; text-align: center; }
-        .stat-item b { display: block; color: #00ffcc; font-size: 13px; }
-        #pattern-alert {
-            display: none; position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%);
-            width: 320px; background: #111; border: 4px solid #ffcc00; border-radius: 35px;
-            padding: 20px; text-align: center; z-index: 10000; color: #fff;
-            box-shadow: 0 0 50px rgba(255, 204, 0, 0.5);
-        }
-        .result-box { font-size: 60px; font-weight: 900; color: #ffcc00; margin: 10px 0; border: 1px dashed #444; border-radius: 15px; }
-        .win-loss-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
-        .scanning { font-size: 10px; color: #888; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .p-res { font-size: 50px; font-weight: 900; margin: 10px 0; letter-spacing: 2px; }
+        .blink-status { font-size: 9px; color: #ffcc00; animation: blink 1s infinite; margin-top: 10px; }
+        @keyframes blink { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
-<iframe id="game-frame" src="https://dkwin.org/#/saasLottery/WinGo?gameCode=WinGo_30S&lottery=WinGo"></iframe>
+<iframe src="https://dkwin.org/#/saasLottery/WinGo?gameCode=WinGo_30S&lottery=WinGo"></iframe>
 
-<div id="smart-hud">
-    <div style="font-size: 11px; text-align: center; color: #888;">NAJMUL MASTER AI V10 PRO</div>
-    <div class="timer-box" id="time-left">00:30</div>
-    <div class="period-box">NEXT: <span id="next-period">SYNCING...</span></div>
-    <div class="stat-grid">
-        <div class="stat-item">MODE<b id="ai-mode">TUNNEL-V10</b></div>
-        <div class="stat-item">TREND<b id="current-trend">STABLE</b></div>
-        <div class="stat-item">STREAK<b id="streak-count">0</b></div>
-        <div class="stat-item">STATUS<b id="ai-status" style="color: #ffcc00;">CONNECTING</b></div>
+<div id="live-analysis-popup">
+    <div style="font-size: 11px; color: #ffcc00; font-weight: bold; letter-spacing: 1px;">LIVE BD ANALYSIS</div>
+    <div id="p-num" style="font-size: 9px; color: #888; margin-top: 5px;">PERIOD: --</div>
+    <div id="p-res" class="p-res">--</div>
+    <div style="display: flex; justify-content: space-around; font-size: 14px; font-weight: bold;">
+        <div id="p-num-val" style="color: #ffcc00;">NUM: --</div>
+        <div id="p-color-val" style="color: #00ffcc;">COLOR: --</div>
     </div>
-    <div class="scanning" id="scan-text" style="margin-top: 10px; text-align: center;">V10 TUNNEL ACTIVE...</div>
-</div>
-
-<div id="pattern-alert">
-    <div style="color: #ffcc00; font-weight: bold; letter-spacing: 2px;">PATTERN MATCH FOUND</div>
-    <div id="target-period" style="font-size: 11px; color: #888; margin-top: 5px;">FOR: --</div>
-    <div class="result-box" id="suggested-size">--</div>
-    <div style="display: flex; justify-content: space-around; font-size: 18px;">
-        <div>NUM: <span id="suggested-num" style="color: #ffcc00;">--</span></div>
-        <div>COLOR: <span id="suggested-color" style="color: #ffcc00;">--</span></div>
-    </div>
-    <div id="feedback-status" class="win-loss-badge" style="background: #333;">V10 PREDICTION</div>
+    <div class="blink-status">SERVER SYNC ACTIVE - V10 PRO</div>
 </div>
 
 <script>
-    let historyData = []; 
-    let lastProcessedPeriod = "";
+    const S_URL = "https://aplyaoxzqcuuuyjlvrgm.supabase.co";
+    const S_KEY = "sb_publishable_FERsICZhtJ8v_cWEXDquuw_1j1HX78R";
 
-    // আরও শক্তিশালী সিঙ্ক ফাংশন
-    async function syncGameData() {
+    async function fetchLiveSignal() {
         try {
-            // মাল্টিপল প্রক্সি সাপোর্ট লজিক
-            const target = 'https://dkwin.org/api/web/game/history?gameCode=WinGo_30S';
-            const proxies = [
-                'https://api.allorigins.win/get?url=',
-                'https://corsproxy.io/?'
-            ];
-            
-            // প্রথম প্রক্সি ট্রাই করা হচ্ছে
-            const response = await fetch(proxies[1] + encodeURIComponent(target));
+            const response = await fetch(`${S_URL}/rest/v1/game_logs?select=*&order=created_at.desc&limit=1`, {
+                headers: { 'apikey': S_KEY, 'Authorization': `Bearer ${S_KEY}` }
+            });
             const data = await response.json();
             
-            // ডাটা চেক এবং UI আপডেট
-            if (data && data.data && data.data.length > 0) {
-                let lastGame = data.data[0]; 
-                let currentPeriod = lastGame.period;
+            if (data.length > 0) {
+                const item = data[0];
+                const popup = document.getElementById('live-analysis-popup');
                 
-                document.getElementById('next-period').innerText = (BigInt(currentPeriod) + 1n).toString();
-                document.getElementById('ai-status').innerText = "LIVE (TUNNEL)";
-                document.getElementById('ai-status').style.color = "#00ffcc";
+                document.getElementById('p-num').innerText = "PERIOD: " + item.period_number;
+                document.getElementById('p-res').innerText = item.result_size;
+                document.getElementById('p-res').style.color = item.result_size === "BIG" ? "#ffcc00" : "#00ffcc";
+                
+                // কাস্টম নম্বর ও কালার লজিক
+                document.getElementById('p-num-val').innerText = "NUM: " + (item.result_size === "BIG" ? "6,8" : "1,3");
+                document.getElementById('p-color-val').innerText = "COLOR: " + (item.result_size === "BIG" ? "RED" : "GREEN");
 
-                if (currentPeriod !== lastProcessedPeriod) {
-                    lastProcessedPeriod = currentPeriod;
-                    historyData = data.data.slice(0, 10).map(item => parseInt(item.result) >= 5 ? 'B' : 'S');
-                }
+                popup.style.display = 'block';
+                // ১২ সেকেন্ড পর পপ-আপ চলে যাবে
+                setTimeout(() => { popup.style.display = 'none'; }, 12000);
             }
         } catch (e) {
-            document.getElementById('ai-status').innerText = "STATUS: BYPASSING...";
-            document.getElementById('ai-status').style.color = "#ffcc00";
+            console.log("Fetch Error:", e);
         }
     }
 
-    function runAIModel() {
-        if (historyData.length < 3) return;
-        const nextPeriod = document.getElementById('next-period').innerText;
-        
-        // স্মার্ট প্যাটার্ন অ্যালগরিদম
-        let pattern = historyData.slice(0, 3).join('');
-        let prediction = historyData[0] === 'B' ? 'SMALL' : 'BIG'; // ডিফল্ট লজিক
-        
-        // স্পেশাল প্যাটার্ন চেক
-        if(pattern === "BBB") prediction = "SMALL";
-        if(pattern === "SSS") prediction = "BIG";
-        
-        displaySignal(prediction, nextPeriod);
-    }
-
-    function displaySignal(pred, period) {
-        let isBig = pred === 'BIG';
-        document.getElementById('suggested-size').innerText = pred;
-        document.getElementById('suggested-size').style.color = isBig ? "#ffcc00" : "#00ffcc";
-        document.getElementById('suggested-num').innerText = isBig ? "5,7,9" : "0,2,4";
-        document.getElementById('suggested-color').innerText = isBig ? "RED" : "GREEN";
-        document.getElementById('target-period').innerText = "FOR: " + period;
-
-        document.getElementById('pattern-alert').style.display = "block";
-        setTimeout(() => { document.getElementById('pattern-alert').style.display = "none"; }, 10000); 
-    }
-
-    function startTimer() {
-        setInterval(() => {
-            let now = new Date();
-            let sec = 30 - (now.getSeconds() % 30);
-            document.getElementById('time-left').innerText = `00:${sec < 10 ? '0' + sec : sec}`;
-            syncGameData();
-            if (sec === 15) runAIModel(); 
-        }, 1000);
-    }
-
-    window.onload = startTimer;
+    // প্রতি ৩০ সেকেন্ডের সাইকেলে ঠিক ১৫ সেকেন্ড বাকি থাকতে ডাটা কল করবে
+    setInterval(() => {
+        let seconds = new Date().getSeconds();
+        if (seconds === 15 || seconds === 45) { 
+            fetchLiveSignal();
+        }
+    }, 1000);
 </script>
+
 </body>
 </html>
